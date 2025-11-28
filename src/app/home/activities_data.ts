@@ -1,0 +1,25 @@
+import asset1 from "./images/asset1.svg"
+import asset2 from "./images/asset2.svg"
+import asset3 from "./images/asset3.svg"
+import asset4 from "./images/asset4.svg"
+
+export const activities = [
+  {
+    name: 'Register',
+    details:
+      "Registration confirms your child as an official Kiddies Crown Contest participant with accurate details.",
+    image: asset1
+  },
+  {
+    name: 'Campaign', details: "You’ll receive a campaign poster to help your child gather votes from friends and family.",
+    image: asset2
+
+  },
+  {
+    name: 'Vote', details: "Active campaigning and vote gathering are essential to help your child shine as the contest’s star.", image: asset3
+  },
+
+  {
+    name: 'Win', details: "Winners will be crowned Mr. or Miss Crown 2025 and awarded ₦3,500,000 plus many prizes.", image: asset4
+  },
+];

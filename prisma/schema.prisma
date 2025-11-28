@@ -1,0 +1,25 @@
+datasource db {
+  provider = "mongodb"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated"
+}
+
+
+model Contestant {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  contestantId String @unique
+  firstName String 
+  lastName String
+  gender String
+  age String
+  picture String?
+  parent String
+  phone String @unique
+  whatsapp String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
