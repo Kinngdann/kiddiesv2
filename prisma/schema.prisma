@@ -6,8 +6,8 @@ datasource db {
 generator client {
   provider = "prisma-client"
   output   = "../src/generated"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
-
 
 model Contestant {
   id String @id @default(auto()) @map("_id") @db.ObjectId

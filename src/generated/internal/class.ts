@@ -34,6 +34,10 @@ const config: runtime.GetPrismaClientConfig = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -56,8 +60,8 @@ const config: runtime.GetPrismaClientConfig = {
       }
     }
   },
-  "inlineSchema": "datasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated\"\n}\n\nmodel Contestant {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  contestantId String   @unique\n  firstName    String\n  lastName     String\n  gender       String\n  age          String\n  picture      String?\n  parent       String\n  phone        String   @unique\n  whatsapp     String   @unique\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @default(now()) @updatedAt\n}\n",
-  "inlineSchemaHash": "347f6719bdb75bb09e0bcaa7c66032f5af646b3aed0fd8202bf4736dd38b4c00",
+  "inlineSchema": "datasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider      = \"prisma-client\"\n  output        = \"../src/generated\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n}\n\nmodel Contestant {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  contestantId String   @unique\n  firstName    String\n  lastName     String\n  gender       String\n  age          String\n  picture      String?\n  parent       String\n  phone        String   @unique\n  whatsapp     String   @unique\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @default(now()) @updatedAt\n}\n",
+  "inlineSchemaHash": "0e47ba7b4f11293681fa7f5867e58cdaebe314cebf0b7bc3bdda38ca70da8d71",
   "copyEngine": true,
   "runtimeDataModel": {
     "models": {},
