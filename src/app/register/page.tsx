@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import {useEffect, useState} from 'react';
-import {Controller, SubmitHandler, useForm} from 'react-hook-form';
-import Image from 'next/image';
+import { useEffect, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import Image from "next/image";
 
-import {Field, FieldError, FieldLabel, FieldSeparator} from '@ui/field';
-import {Button} from '@ui/button';
+import { Field, FieldError, FieldLabel, FieldSeparator } from "@ui/field";
+import { Button } from "@ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@ui/card';
-import {Input} from '@ui/input';
+} from "@ui/card";
+import { Input } from "@ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@ui/select';
-import {Spinner} from '@ui/spinner';
+} from "@ui/select";
+import { Spinner } from "@ui/spinner";
 
 import {
   AlertDialog,
@@ -31,17 +31,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@ui/alert-dialog';
+} from "@ui/alert-dialog";
 
-import {AlertCircleIcon} from 'lucide-react';
-import {Alert, AlertDescription, AlertTitle} from '@ui/alert';
-import {BadgeCheckIcon} from 'lucide-react';
-import Link from 'next/link';
+import { AlertCircleIcon } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@ui/alert";
+import { BadgeCheckIcon } from "lucide-react";
+import Link from "next/link";
 
 interface IFormInput {
   firstName: string;
   lastName: string;
-  gender: 'male' | 'female' | '';
+  gender: "male" | "female" | "";
   age: string;
   phone: string;
   whatsapp: string;
@@ -66,16 +66,16 @@ export default function RegistrationForm() {
     handleSubmit,
     control,
     watch,
-    formState: {errors, isSubmitting},
+    formState: { errors, isSubmitting },
   } = useForm<IFormInput>({
     defaultValues: {
-      gender: '',
-      age: '',
+      gender: "",
+      age: "",
     },
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library
-  const imageFile = watch('picture');
+  const imageFile = watch("picture");
 
   useEffect(() => {
     if (imageFile && imageFile.length > 0) {
@@ -89,25 +89,25 @@ export default function RegistrationForm() {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const formData = new FormData();
-    formData.append('firstName', data.firstName);
-    formData.append('lastName', data.lastName);
-    formData.append('gender', data.gender);
-    formData.append('age', data.age);
-    formData.append('parent', data.parentName);
-    formData.append('phone', data.phone);
-    formData.append('whatsapp', data.whatsapp);
+    formData.append("firstName", data.firstName);
+    formData.append("lastName", data.lastName);
+    formData.append("gender", data.gender);
+    formData.append("age", data.age);
+    formData.append("parent", data.parentName);
+    formData.append("phone", data.phone);
+    formData.append("whatsapp", data.whatsapp);
 
     if (data.picture && data.picture.length > 0) {
-      formData.append('picture', data.picture[0]);
+      formData.append("picture", data.picture[0]);
     }
 
     try {
-      const response = await fetch('/api/contestant', {
-        method: 'POST',
+      const response = await fetch("/api/contestant", {
+        method: "POST",
         body: formData,
       });
 
-      if (response.status === 200 && response.statusText === 'OK') {
+      if (response.status === 200 && response.statusText === "OK") {
         const contestant = await response.json();
         setContestant({
           ...contestant,
@@ -115,7 +115,7 @@ export default function RegistrationForm() {
         setRegSuccess(true);
       } else {
         setRegError(true);
-        throw new Error('Request failed');
+        throw new Error("Request failed");
       }
     } catch (error) {
       console.log(error);
@@ -131,7 +131,7 @@ export default function RegistrationForm() {
             <CardHeader>
               <CardTitle className="text-2xl">Registration Form</CardTitle>
               <CardDescription>
-                Kindly fill out the form to enroll your child into the{' '}
+                Kindly fill out the form to enroll your child into the{" "}
                 <span className="font-bold">Kiddies Crown Contest</span>
               </CardDescription>
             </CardHeader>
@@ -142,11 +142,11 @@ export default function RegistrationForm() {
                     <FieldLabel
                       htmlFor="firstName"
                       className='max-w-fit relative after:absolute after:text-red-500 after:content-["*"] after:-right-2'>
-                      First Name Name
+                      First Name
                     </FieldLabel>
                     <Input
-                      {...register('firstName', {
-                        required: 'First Name is required',
+                      {...register("firstName", {
+                        required: "First Name is required",
                         maxLength: 20,
                       })}
                       placeholder="Jane"
@@ -156,8 +156,8 @@ export default function RegistrationForm() {
                   <Field>
                     <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
                     <Input
-                      {...register('lastName', {
-                        required: 'Last Name is required',
+                      {...register("lastName", {
+                        required: "Last Name is required",
                         maxLength: 20,
                       })}
                       placeholder="Akintola"
@@ -172,8 +172,8 @@ export default function RegistrationForm() {
                     <Controller
                       name="gender"
                       control={control}
-                      rules={{required: 'Select a valid gender'}}
-                      render={({field}) => (
+                      rules={{ required: "Select a valid gender" }}
+                      render={({ field }) => (
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}>
@@ -194,8 +194,8 @@ export default function RegistrationForm() {
                     <Controller
                       name="age"
                       control={control}
-                      rules={{required: 'Select a valid age'}}
-                      render={({field}) => (
+                      rules={{ required: "Select a valid age" }}
+                      render={({ field }) => (
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}>
@@ -227,8 +227,8 @@ export default function RegistrationForm() {
                       id="picture"
                       type="file"
                       accept="image/*"
-                      {...register('picture', {
-                        required: 'Picture is required',
+                      {...register("picture", {
+                        required: "Picture is required",
                       })}
                     />
                     {preview && (
@@ -249,8 +249,8 @@ export default function RegistrationForm() {
                     Parent&apos;s Full Name
                   </FieldLabel>
                   <Input
-                    {...register('parentName', {
-                      required: 'Parent name is required',
+                    {...register("parentName", {
+                      required: "Parent name is required",
                       maxLength: 70,
                     })}
                     placeholder="Onyinyechi Akintola"
@@ -261,11 +261,11 @@ export default function RegistrationForm() {
                   <Field>
                     <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
                     <Input
-                      {...register('phone', {
-                        required: 'Phone number is required',
+                      {...register("phone", {
+                        required: "Phone number is required",
                         pattern: {
                           value: /^(?:(?:0|\+234)\s?)?[789]\d{9}$/,
-                          message: 'Invalid phone number format',
+                          message: "Invalid phone number format",
                         },
                       })}
                       placeholder="+2348012345678"
@@ -275,11 +275,11 @@ export default function RegistrationForm() {
                   <Field>
                     <FieldLabel htmlFor="whatsapp">WhatsApp Number</FieldLabel>
                     <Input
-                      {...register('whatsapp', {
-                        required: 'WhatsApp number is required',
+                      {...register("whatsapp", {
+                        required: "WhatsApp number is required",
                         pattern: {
                           value: /^(?:(?:0|\+234)\s?)?[789]\d{9}$/,
-                          message: 'Invalid WhatsApp number format',
+                          message: "Invalid WhatsApp number format",
                         },
                       })}
                       placeholder="+2348012345678"
@@ -293,7 +293,7 @@ export default function RegistrationForm() {
                     className="w-full mt-8"
                     disabled={isSubmitting}>
                     {isSubmitting && <Spinner />}
-                    {isSubmitting ? 'Registering...' : 'Register'}
+                    {isSubmitting ? "Registering..." : "Register"}
                   </Button>
                   {regError && (
                     <Alert variant="destructive">
@@ -321,13 +321,13 @@ export default function RegistrationForm() {
             <BadgeCheckIcon className="size-7 fill-teal-400 mx-auto" />
             <AlertDialogTitle>Registration was succesfull</AlertDialogTitle>
             <AlertDialogDescription>
-              Thank you for your interest in the{' '}
+              Thank you for your interest in the{" "}
               <span className="font-semibold">Kiddies Crown Contest</span>, our
               customer care representative will reach out to you shortly over
               the phone.
             </AlertDialogDescription>
             <AlertDialogDescription className="font-semibold">
-              {`${contestant.name}'s ID is`}{' '}
+              {`${contestant.name}'s ID is`}{" "}
               <span className="font-black">{contestant.id}</span>
             </AlertDialogDescription>
           </AlertDialogHeader>

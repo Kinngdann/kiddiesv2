@@ -1,36 +1,84 @@
-import Image from 'next/image';
-import Link from 'next/link';
+"use client";
 
-export default function Navigation() {
-  const navItems = [
-    {name: 'Home', url: '/'},
-    {name: 'About', url: 'about'},
-    {name: 'Contest', url: 'contest'},
-    {name: 'Past Winners', url: 'past-winners'},
-    {name: 'Register', url: 'register'},
-  ];
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { Menu, Search, X } from "lucide-react";
+import { Button } from "@ui/button";
+
+const navigationLinks = [
+  { name: "Home", href: "/" },
+  { name: "About", href: "/#about" },
+  { name: "Contestants", href: "/all-contestants" },
+  { name: "Elite Board", href: "/elite-board" },
+  { name: "Privacy Policy", href: "/privacy-policy" },
+];
+
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
 
   return (
-    <nav className="hidden fixed z-10 w-full py-6 px-24 lg:flex justify-between items-center">
-      <Image
-        className="dark:invert"
-        src="/logo.svg"
-        alt="Next.js logo"
-        width={100}
-        height={20}
-        priority
-      />
-      <ul className="flex gap-6">
-        {navItems.map((item) => (
-          <li key={item.url}>
+    <nav className="fixed w-full bg-white shadow-xl z-10">
+      <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
+        <Image
+          className="dark:invert w-20 md:w-25"
+          src="/logo.svg"
+          alt="Kiddies Crown Contest logo"
+          width={100}
+          height={20}
+          priority
+        />
+        <div className="space-x-8 hidden md:inline-block">
+          {navigationLinks.map((link) => (
             <Link
-              href={item.url}
-              className="text-lg font-bold text-gray-600 hover:text-orange-300 hover:transition-all">
-              {item.name}
+              key={link.name}
+              href={link.href}
+              className="text-black/70 text-[0.95rem] font-black hover:text-pink-500 transition">
+              {link.name}
             </Link>
-          </li>
-        ))}
-      </ul>
+          ))}
+          <Button variant="outline" size="icon">
+            <Search />
+          </Button>
+        </div>
+
+        <Button
+          onClick={() => setOpen(!open)}
+          variant="outline"
+          size="icon"
+          className="md:hidden">
+          {open ? <X /> : <Menu />}
+        </Button>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="md:hidden overflow-hidden backdrop-blur-md ">
+            <div className="px-4 py-4 flex flex-col gap-4 ">
+              {navigationLinks.map((link) => (
+                <Link
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                  key={link.name}
+                  href={link.href}
+                  className="text-black/70 text-[0.95rem] font-black hover:text-pink-500 transition">
+                  {link.name}
+                </Link>
+              ))}
+              <Button asChild className="font-bold">
+                <Link href="/register">REGISTER</Link>
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

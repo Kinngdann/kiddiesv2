@@ -1,25 +1,47 @@
-datasource db {
-  provider = "mongodb"
-  url = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Contestant {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  contestantId String @unique
-  firstName String 
-  lastName String
-  gender String
-  age String
-  picture String?
-  parent String
-  phone String @unique
-  whatsapp String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  contestantId String    @unique
+  firstName    String
+  lastName     String
+  gender       String
+  age          String
+  bio          String?
+  picture      String?
+  parent       String
+  phone        String    @unique
+  whatsapp     String    @unique
+  disabled     Boolean   @default(false)
+  stage1vote   Int       @default(1)
+  stage2vote   Int       @default(0)
+  stage3vote   Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+  voteLogs     VoteLog[]
+}
+
+model VoteLog {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  voterName     String
+  amount        Int
+  numberOfVotes Int
+  voteMethod    VoteMethod
+  contestantId  String
+  contestant    Contestant @relation(fields: [contestantId], references: [contestantId])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now()) @updatedAt
+}
+
+enum VoteMethod {
+  paystack
+  bank_tx
 }

@@ -20,6 +20,6 @@ export const activities = [
   },
 
   {
-    name: 'Win', details: "Winners will be crowned Mr. or Miss Crown 2025 and awarded ₦3,500,000 plus many prizes.", image: asset4
+    name: 'Win', details: "Winners will be crowned Mr. or Miss Crown 2025, and awarded ₦5,000,000, Christmas prizes.", image: asset4
   },
 ];

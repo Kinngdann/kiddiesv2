@@ -20,6 +20,9 @@
 # production
 /build
 
+# dev uploads
+/public/uploads
+
 # misc
 .DS_Store
 *.pem
@@ -41,3 +44,7 @@ yarn-error.log*
 next-env.d.ts
 
 /generated/prisma
+
+/src/generated/prisma
+
+/src/generated/prisma

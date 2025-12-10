@@ -1,12 +1,12 @@
-import {Button} from '@ui/button';
-import Link from 'next/link';
+import { Button } from "@ui/button";
+import Link from "next/link";
 
 export default function HeroPage() {
   return (
     <section className="heroBg full-bleed px-5 lg:px-28 min-h-dvh grid lg:grid-cols-2 place-items-center">
       <div className="space-y-8">
         <h1 className="mb-4 font-black">
-          How{' '}
+          How{" "}
           <span className="relative">
             <span
               className="absolute -inset-1 top-0 bottom-0 block -skew-y-3 bg-pink-500"
@@ -17,13 +17,16 @@ export default function HeroPage() {
           is Your Child?
         </h1>
         <p className="text-[1.1rem] lg:text-[1.3rem] font-semibold max-w-[40ch]">
-          Set your child up for success, an oppurtunity to command the star in
-          your child in the Kiddies Crown Contest
+          Join the{" "}
+          <code className="font-bold bg-gray-200 px-1">
+            #KiddiesCrownContest
+          </code>{" "}
+          and give your child the chance to shine!
         </p>
         <div className="">
           <Button asChild className="h-12 px-8 font-bold mr-4" size="lg">
             <Link href="/register" target="_blank">
-              REGISTER
+              JOIN CONTEST
             </Link>
           </Button>
           <Button

@@ -1,6 +1,6 @@
 export default function Privacy() {
   return (
-    <div>
+    <div className="fb-col-wrapper py-18 max-w-[65ch] mx-auto">
       <h1>Privacy Policy</h1>
       <p>Last updated: November 27, 2025</p>
       <p>
@@ -13,7 +13,7 @@ export default function Privacy() {
         We use Your Personal data to provide and improve the Service. By using
         the Service, You agree to the collection and use of information in
         accordance with this Privacy Policy. This Privacy Policy has been
-        created with the help of the{' '}
+        created with the help of the{" "}
         <a
           href="https://www.privacypolicies.com/privacy-policy-generator/"
           target="_blank">
@@ -104,7 +104,7 @@ export default function Privacy() {
         </li>
         <li>
           <p>
-            <strong>Website</strong> refers to Kiddies Crown, accessible from{' '}
+            <strong>Website</strong> refers to Kiddies Crown, accessible from{" "}
             <a
               href="kidscrown.net"
               rel="external nofollow noopener"
@@ -194,12 +194,12 @@ export default function Privacy() {
         Cookies can be &quot;Persistent&quot; or &quot;Session&quot; Cookies.
         Persistent Cookies remain on Your personal computer or mobile device
         when You go offline, while Session Cookies are deleted as soon as You
-        close Your web browser. Learn more about cookies on the{' '}
+        close Your web browser. Learn more about cookies on the{" "}
         <a
           href="https://www.privacypolicies.com/blog/privacy-policy-template/#Use_Of_Cookies_Log_Files_And_Tracking"
           target="_blank">
           Privacy Policies website
-        </a>{' '}
+        </a>{" "}
         article.
       </p>
       <p>

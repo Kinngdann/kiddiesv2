@@ -1,12 +1,1 @@
-export {default} from './home';
-
-// {
-/* <Image
-  className="dark:invert"
-  src="/next.svg"
-  alt="Next.js logo"
-  width={100}
-  height={20}
-  priority
-/> */
-// }
+export { default } from "./home";

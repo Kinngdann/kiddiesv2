@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await picture.arrayBuffer());
 
-    const uploadDir = path.join("public", "uploads");
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
 
     const fileName = `${Date.now()}-${firstName}_${lastName}-${picture.name}`;
@@ -57,10 +57,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// export async function GET(
-//   request: NextRequest,
-//   { params }: { params: Promise<{ contestantId: string }> }
-// ) {
-//   const { contestantId } = await params
-//   console.log(contestantId)
-// }
