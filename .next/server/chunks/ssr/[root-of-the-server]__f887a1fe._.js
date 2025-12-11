@@ -1,3 +1,0 @@
-module.exports=[93695,(a,b,c)=>{b.exports=a.x("next/dist/shared/lib/no-fallback-error.external.js",()=>require("next/dist/shared/lib/no-fallback-error.external.js"))},50645,a=>{a.n(a.i(27572))},59808,a=>{a.n(a.i(68619))},67331,a=>{a.n(a.i(61910))},1772,a=>{a.n(a.i(30208))},12581,a=>{a.n(a.i(72248))},87208,a=>{"use strict";var b=a.i(50680);function c(){return(0,b.jsx)("section",{className:"fb-col-wrapper min-h-dvh grid place-items-center",children:(0,b.jsx)("p",{className:"text-center",children:"You'll be able to see all other contestants here shortly."})})}a.s(["default",()=>c])}];
-
-//# sourceMappingURL=%5Broot-of-the-server%5D__f887a1fe._.js.map
