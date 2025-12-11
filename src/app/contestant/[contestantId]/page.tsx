@@ -24,7 +24,7 @@ export default async function Contestant({ params }: ContestantPageParams) {
   const user = await response.json();
   const contestant = {
     ...user,
-    name: `${user.firstName} ${user.lastName}`,
+    name: `${user.firstName} ${user.lastName ?? ""}`,
   };
 
   return (

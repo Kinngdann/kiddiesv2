@@ -8,6 +8,8 @@ import { nthPosition } from "@/utils/format-position";
 import { useState } from "react";
 import { ShowVoteSuccess } from "./voting-success";
 import { useRouter } from "next/navigation";
+import malePic from "./images/ma.jpg";
+import femalePic from "./images/fe.jpg";
 
 type contestantProps = {
   contestant: {
@@ -49,6 +51,13 @@ export default function Profile({ contestant }: contestantProps) {
     router.refresh();
   };
 
+  const srcImage =
+    contestant.picture === null
+      ? contestant.gender === "male"
+        ? malePic
+        : femalePic
+      : `/${contestant.picture}`;
+
   return (
     <>
       <ShowVoteSuccess
@@ -60,7 +69,7 @@ export default function Profile({ contestant }: contestantProps) {
       <div className="full-bleed max-h-96 md:max-h-100 overflow-clip md:rounded-xl md:col-start-2 md:col-span-6">
         <Image
           alt="Profile picture"
-          src={`/${contestant.picture}`}
+          src={srcImage}
           width={360}
           height={460}
           priority
@@ -101,8 +110,10 @@ export default function Profile({ contestant }: contestantProps) {
             </div>
             <div className="flex gap-2 items-center">
               <span className="font-bold">Position:</span>
-              <span className="text-2xl font-black ">
-                {nthPosition(contestant.position)}
+              <span className="text-2xl font-black">
+                {contestant.position <= 20
+                  ? nthPosition(contestant.position)
+                  : "Nil"}
               </span>
             </div>
           </div>
@@ -110,7 +121,7 @@ export default function Profile({ contestant }: contestantProps) {
             <p className="text-sm mt-2 font-bold">
               🏅Best performing contestant right now
             </p>
-          ) : (
+          ) : contestant.position <= 20 ? (
             <p className="text-sm mt-2">
               <span className="font-bold">Tip:</span> this contestant needs
               atleast{" "}
@@ -121,6 +132,11 @@ export default function Profile({ contestant }: contestantProps) {
               <span className="font-bold">
                 {nthPosition(contestant.position - 1)} position
               </span>
+            </p>
+          ) : (
+            <p className="text-sm mt-2">
+              {contestant.name} needs atleast{" "}
+              <span className="font-bold">300 votes</span> to get to the final
             </p>
           )}
         </div>

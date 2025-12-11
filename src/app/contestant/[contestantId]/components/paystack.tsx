@@ -37,8 +37,8 @@ export default function PaystackPaymentProcessing({
     reference: ref,
     email: `${paymentData.contestantId}-${ref}@kidscrown.net`,
     amount: Number(paymentData.voteData.numberOfVotes) * (COST_PER_VOTE * 100),
-    publicKey: process.env.PAYSTACK_PUBLIC_KEY || "",
-    // publicKey: "pk_live_eae4d935752ac44cb106cc9ff96e7519b17c9660",
+    publicKey: "pk_live_eae4d935752ac44cb106cc9ff96e7519b17c9660",
+    // publicKey: process.env.PAYSTACK_PUBLIC_KEY || "",
   };
 
   const initializePayment = usePaystackPayment(config);
