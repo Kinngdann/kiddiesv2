@@ -1,0 +1,14 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/admin/add-vote/page": "/admin/add-vote",
+  "/all-contestants/page": "/all-contestants",
+  "/api/contestant/[contestantId]/route": "/api/contestant/[contestantId]",
+  "/api/contestant/route": "/api/contestant",
+  "/api/vote/route": "/api/vote",
+  "/contestant/[contestantId]/page": "/contestant/[contestantId]",
+  "/elite-board/page": "/elite-board",
+  "/page": "/",
+  "/privacy-policy/page": "/privacy-policy",
+  "/register/page": "/register"
+}

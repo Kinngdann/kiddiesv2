@@ -38,7 +38,6 @@ export default function PaystackPaymentProcessing({
     email: `${paymentData.contestantId}-${ref}@kidscrown.net`,
     amount: Number(paymentData.voteData.numberOfVotes) * (COST_PER_VOTE * 100),
     publicKey: process.env.PAYSTACK_PUBLIC_KEY || "",
-    // publicKey: "pk_test_d7686ff54ec8f09b78187e3e55422be1d2b61d01",
     // publicKey: "pk_live_eae4d935752ac44cb106cc9ff96e7519b17c9660",
   };
 
