@@ -2,6 +2,7 @@ import Countdown from "./components/countdown";
 import HowToVote from "./components/how-to-vote";
 import NoUserFound from "./components/not-found";
 import Profile from "./components/profile";
+import { ShareLink } from "./components/share";
 
 interface ContestantPageParams {
   params: {
@@ -30,6 +31,7 @@ export default async function Contestant({ params }: ContestantPageParams) {
     <section className="fb-col-wrapper pt-20 md:pt-32">
       <Countdown target="2025-12-21" header="Stage 1 Ends in" />
       <Profile contestant={contestant} />
+      <ShareLink />
       <HowToVote />
     </section>
   );

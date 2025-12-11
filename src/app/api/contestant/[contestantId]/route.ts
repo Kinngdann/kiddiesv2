@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { contestantId: string } }
-) {
-  const { contestantId } = await params;
+  context: { params: Promise<{ contestantId: string }> }
+): Promise<Response> {
+  const { contestantId } = await context.params;
 
   try {
     const contestant = await prisma.contestant.findUnique({
@@ -27,7 +27,10 @@ export async function GET(
     });
 
     if (!contestant) {
-      return NextResponse.json({ error: "Contestant not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contestant not found" },
+        { status: 404 }
+      );
     }
 
     const position = await prisma.contestant.count({
@@ -36,18 +39,24 @@ export async function GET(
 
     const preceding = await prisma.contestant.findFirst({
       where: { stage1vote: { gt: contestant.stage1vote } },
-      orderBy: { stage1vote: "asc" }, // minimal greater
+      orderBy: { stage1vote: "asc" },
       select: { stage1vote: true },
     });
 
-    // 4. Compute vote difference
     const voteDifference = preceding
       ? preceding.stage1vote - contestant.stage1vote
-      : null; // contestant is rank #1
+      : null;
 
-    return NextResponse.json({ ...contestant, position, voteDifference });
+    return NextResponse.json({
+      ...contestant,
+      position,
+      voteDifference
+    });
   } catch (error) {
-    console.error("Error getting contestant:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

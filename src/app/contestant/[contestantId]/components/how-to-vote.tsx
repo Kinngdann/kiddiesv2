@@ -8,6 +8,7 @@ export default function HowToVote() {
         </li>
         <li>Type in your name and select number of votes in the voting form</li>
         <li>Select the voting method, and follow the prompts accordingly</li>
+        <li>You can vote multiple times</li>
       </ol>
     </section>
   );

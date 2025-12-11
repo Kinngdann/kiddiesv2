@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
             numberOfVotes: votesToAdd,
             amount: Number(data.amount),
             voteMethod: data.voteMethod,
+            keepAnonymous: data.keepAnonymous
           },
         },
       },

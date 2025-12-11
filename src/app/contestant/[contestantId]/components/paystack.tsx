@@ -1,40 +1,88 @@
+// "use client";
+
 import { usePaystackPayment } from "react-paystack";
 import { Button } from "@ui/button";
+import { Lock } from "lucide-react";
 
-type PaystackProps = {
-  contestantId: string;
-  number_of_votes: number;
-  isButtonDisabled: boolean;
+type VoteData = {
+  voterName: string;
+  numberOfVotes: string;
+  keepAnonymous: boolean | null;
 };
 
+type PaymentData = {
+  contestantId: string;
+  voteData: VoteData;
+};
+
+type PaystackProps = {
+  updateSuccessDialogData: (numberOfVotes: string) => void;
+  isFormValid: boolean;
+  closeAllDialog: () => void;
+  paymentData: PaymentData;
+};
+
+const COST_PER_VOTE = 50;
+
 export default function PaystackPaymentProcessing({
-  // contestantId,
-  number_of_votes,
-  isButtonDisabled,
+  updateSuccessDialogData,
+  isFormValid,
+  closeAllDialog,
+  paymentData,
 }: PaystackProps) {
-  const COST_PER_VOTE = 50;
+  // console.log("key", process.env.PAYSTACK_PUBLIC_KEY);
+  const ref = new Date().getTime().toString();
+
   const config = {
-    reference: new Date().getTime().toString(),
-    email: "user@example.com",
-    amount: number_of_votes * (COST_PER_VOTE * 100),
-    publicKey: "pk_test_d7686ff54ec8f09b78187e3e55422be1d2b61d01",
+    reference: ref,
+    email: `${paymentData.contestantId}-${ref}@kidscrown.net`,
+    amount: Number(paymentData.voteData.numberOfVotes) * (COST_PER_VOTE * 100),
+    publicKey: process.env.PAYSTACK_PUBLIC_KEY || "",
+    // publicKey: "pk_test_d7686ff54ec8f09b78187e3e55422be1d2b61d01",
   };
 
   const initializePayment = usePaystackPayment(config);
 
-  const onSuccess = (reference: unknown) => {
-    console.log("Payment success:", reference);
+  const onSuccess = async () => {
+    let voteData;
+    voteData = {
+      contestantId: paymentData.contestantId,
+      voterName: paymentData.voteData.voterName,
+      amount: Number(paymentData.voteData.numberOfVotes) * COST_PER_VOTE,
+      voteMethod: "paystack",
+      // keepAnonymous: paymentData.voteData.keepAnonymous,
+    };
+
+    if (paymentData.voteData.keepAnonymous !== null) {
+      voteData = {
+        ...voteData,
+        keepAnonymous: paymentData.voteData.keepAnonymous,
+      };
+    }
+
+    await fetch("http://localhost:3000/api/vote", {
+      method: "POST",
+      body: JSON.stringify(voteData),
+    });
+
+    console.log("Payment successful");
+    updateSuccessDialogData(paymentData.voteData.numberOfVotes);
   };
 
   const onClose = () => {
     console.log("Payment closed");
   };
 
+  const onSubmit = () => {
+    if (isFormValid) {
+      closeAllDialog();
+      initializePayment({ onSuccess, onClose });
+    }
+  };
+
   return (
-    <Button
-      onClick={() => initializePayment({ onSuccess, onClose })}
-      disabled={isButtonDisabled}>
-      Continue
+    <Button onClick={onSubmit} type="submit">
+      Continue <Lock />
     </Button>
   );
 }

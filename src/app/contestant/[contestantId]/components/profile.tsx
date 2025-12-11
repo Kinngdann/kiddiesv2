@@ -1,8 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import VotingForm from "./voting-form";
 import PastVotes from "./past-votes";
 import { capitalize } from "@/utils/capitalize";
 import { nthPosition } from "@/utils/format-position";
+import { useState } from "react";
+import { ShowVoteSuccess } from "./voting-success";
+import { useRouter } from "next/navigation";
 
 type contestantProps = {
   contestant: {
@@ -22,13 +27,36 @@ type contestantProps = {
       numberOfVotes: number;
       voteMethod: string;
       createdAt: string;
+      keepAnonymous: boolean | null;
     }[];
   };
 };
 
 export default function Profile({ contestant }: contestantProps) {
+  const router = useRouter();
+  const [successDialog, setSuccessDialog] = useState<boolean>(false);
+  const [successDialogData, setSuccessDialogData] = useState<{
+    vote: string;
+  }>();
+
+  const updateSuccessDialogData = (numberOfVotes: string) => {
+    setSuccessDialogData({ vote: numberOfVotes });
+    setSuccessDialog(true);
+  };
+
+  const refreshPage = () => {
+    setSuccessDialog(false);
+    router.refresh();
+  };
+
   return (
     <>
+      <ShowVoteSuccess
+        open={successDialog}
+        refreshPage={refreshPage}
+        vote={successDialogData?.vote || "0"}
+        contestantName={contestant.name}
+      />
       <div className="full-bleed max-h-96 md:max-h-100 overflow-clip md:rounded-xl md:col-start-2 md:col-span-6">
         <Image
           alt="Profile picture"
@@ -41,7 +69,7 @@ export default function Profile({ contestant }: contestantProps) {
       </div>
       <div className="md:col-start-8 md:col-span-6 space-y-6">
         <div>
-          <p className="font-bold text-sm text-white bg-gray-500 w-fit px-2">
+          <p className="font-bold text-sm text-gray-500 bg-gray-200 w-fit rounded-xs px-2">
             Contestant No: <span>{contestant.contestantId}</span>
           </p>
           <h1 className="leading-12 font-black text-3xl md:text-4xl">
@@ -99,9 +127,11 @@ export default function Profile({ contestant }: contestantProps) {
         <div className="flex items-center gap-4">
           <PastVotes voteLog={contestant.voteLogs} />
           <VotingForm
+            updateSuccessDialogData={updateSuccessDialogData}
             contestant={{
               contestantId: contestant.contestantId,
               name: contestant.name,
+              gender: contestant.gender,
               stage1votes: contestant.stage1vote,
             }}
           />

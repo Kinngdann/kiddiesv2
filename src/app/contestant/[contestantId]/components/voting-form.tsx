@@ -1,6 +1,6 @@
 "use client";
 
-import { usePaystackPayment } from "react-paystack";
+import { useState } from "react";
 import { Field, FieldError, FieldLabel } from "@ui/field";
 import { Button } from "@ui/button";
 import {
@@ -22,14 +22,15 @@ import {
 } from "@ui/select";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Checkbox } from "@ui/checkbox";
-import { Lock } from "lucide-react";
 import BankTransferInstructions from "./bank-transfer-intructions";
-import { useState } from "react";
+import PaystackPaymentProcessing from "./paystack";
 
 type Props = {
+  updateSuccessDialogData: (numberOfVotes: string) => void;
   contestant: {
     contestantId: string;
     name: string;
+    gender: string;
     stage1votes: number;
   };
 };
@@ -41,7 +42,10 @@ interface IFormInput {
   votingMethod: "paystack" | "bankTransfer";
 }
 
-export default function VotingForm({ contestant }: Props) {
+export default function VotingForm({
+  contestant,
+  updateSuccessDialogData,
+}: Props) {
   const { contestantId, name, stage1votes } = contestant;
 
   const {
@@ -49,33 +53,32 @@ export default function VotingForm({ contestant }: Props) {
     handleSubmit,
     control,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isValid },
   } = useForm<IFormInput>();
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const isPaystackSelected = watch("votingMethod") === "paystack";
   const numberOfVotes = watch("numberOfVotes");
+
+  const paymentData = {
+    contestantId: contestant.contestantId,
+    voteData: {
+      voterName: watch("voterName"),
+      keepAnonymous: watch("keepAnonymous") ?? null,
+      numberOfVotes,
+    },
+  };
 
   const [activeDialog, setActiveDialog] = useState<"none" | "first" | "second">(
     "none"
   );
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const COST_PER_VOTE = 50;
-    const config = {
-      reference: new Date().getTime().toString(),
-      email: "user@example.com",
-      amount: Number(data.numberOfVotes) * (COST_PER_VOTE * 100),
-      publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
-    };
+  const closeAllDialog = () => {
+    setActiveDialog("none");
+  };
 
-    const initializePayment = usePaystackPayment(config);
-
-    initializePayment({
-      onSuccess: () => {
-        console.log("Voting successful");
-      },
-      onClose: () => console.log("Payment closed"),
-    });
+  const onSubmit: SubmitHandler<IFormInput> = async () => {
+    // console.log(data);
   };
 
   return (
@@ -98,24 +101,37 @@ export default function VotingForm({ contestant }: Props) {
             <DialogTitle className="font-bold">
               Vote for <span className="font-black">{name}</span>
             </DialogTitle>
-            <DialogDescription>
-              Help this contestant get{" "}
-              <span className="font-bold">{500 - stage1votes} more votes</span>{" "}
-              to qualify for the <span className="font-bold">final</span>.
-            </DialogDescription>
+            {contestant.stage1votes < 300 ? (
+              <DialogDescription>
+                Help <span className="font-bold">{contestant.name}</span> get{" "}
+                <span className="font-bold">
+                  {300 - stage1votes} more votes
+                </span>{" "}
+                to qualify for the <span className="font-bold">final</span>.
+              </DialogDescription>
+            ) : (
+              <DialogDescription>
+                Help <span className="font-bold">{contestant.name}</span> get as
+                much votes as possible to help{" "}
+                {`${contestant.gender === "male" ? "him" : "her"}`}{" "}
+                <span className="font-bold">win</span> the contest.
+              </DialogDescription>
+            )}
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-6">
               {/* VOTER NAME */}
               <Field className="grid gap-3">
-                <FieldLabel htmlFor="voterName">Voter&apos;s Name</FieldLabel>
+                <FieldLabel htmlFor="voterName">
+                  What&apos;s your name
+                </FieldLabel>
                 <Input
                   {...register("voterName", {
                     required: "Your name is required",
                     maxLength: 50,
                   })}
-                  placeholder="Jane"
+                  placeholder="Adeola Chisom"
                 />
                 <FieldError>{errors.voterName?.message}</FieldError>
               </Field>
@@ -134,7 +150,7 @@ export default function VotingForm({ contestant }: Props) {
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Votes" />
+                        <SelectValue placeholder="Number of votes" />
                       </SelectTrigger>
                       <SelectContent className="border-0">
                         {[5, 10, 20, 50, 100, 200, 500, 1000].map((v) => (
@@ -163,7 +179,7 @@ export default function VotingForm({ contestant }: Props) {
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Voting Method" />
+                        <SelectValue placeholder="Voting method" />
                       </SelectTrigger>
                       <SelectContent className="border-0">
                         <SelectItem value="paystack">Paystack</SelectItem>
@@ -195,7 +211,8 @@ export default function VotingForm({ contestant }: Props) {
                             Keep my vote anonymous
                           </FieldLabel>
                           <p className="text-muted-foreground text-sm">
-                            This will hide your name from public records
+                            This will hide your name on the contestant&apos;s
+                            vote records
                           </p>
                         </div>
                       </div>
@@ -211,9 +228,12 @@ export default function VotingForm({ contestant }: Props) {
                 </DialogClose>
 
                 {isPaystackSelected ? (
-                  <Button type="submit" disabled={isSubmitting}>
-                    Continue <Lock />
-                  </Button>
+                  <PaystackPaymentProcessing
+                    isFormValid={isValid}
+                    closeAllDialog={closeAllDialog}
+                    paymentData={paymentData}
+                    updateSuccessDialogData={updateSuccessDialogData}
+                  />
                 ) : (
                   <Button
                     type="button"

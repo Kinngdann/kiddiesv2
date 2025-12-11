@@ -62,9 +62,9 @@ export default function NoUserFound() {
           asChild
           className="text-muted-foreground"
           size="sm">
-          <a href="https://kidscrown.net#about">
+          <Link href="/#about">
             Learn More <ArrowUpRightIcon />
-          </a>
+          </Link>
         </Button>
       </Empty>
     </div>

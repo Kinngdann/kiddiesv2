@@ -61,7 +61,7 @@ export default function BankTransferInstructions({
       </ol>
 
       <div className="fixed bottom-8">
-        <Link href="https://fontawesome.com/icons/whatsapp?f=brands&s=solid&an=spin">
+        <Link href="https://wa.me/message/ZZPKEGOSI2TON1">
           <Image src={whatsappIcon} alt="whatsapp icon" width={40} />
         </Link>
       </div>
