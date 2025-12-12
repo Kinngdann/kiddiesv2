@@ -16,19 +16,20 @@ export async function POST(request: NextRequest) {
     const whatsapp = formData.get("whatsapp");
     const picture = formData.get('picture') as File | null;
 
-    if (!picture) {
-      return NextResponse.json({ error: 'Missing picture' }, { status: 400 })
+    let fileName;
+
+    if (picture) {
+      const buffer = Buffer.from(await picture.arrayBuffer());
+
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      await mkdir(uploadDir, { recursive: true });
+
+      fileName = `${Date.now()}-${firstName}_${lastName}-${picture.name}`;
+      const filePath = path.join(uploadDir, fileName);
+
+      await writeFile(filePath, buffer);
     }
 
-    const buffer = Buffer.from(await picture.arrayBuffer());
-
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-
-    const fileName = `${Date.now()}-${firstName}_${lastName}-${picture.name}`;
-    const filePath = path.join(uploadDir, fileName);
-
-    await writeFile(filePath, buffer);
 
     if (!firstName || !lastName || !age || !phone || !whatsapp)
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
         lastName: String(lastName),
         gender: String(gender),
         age: String(age),
-        picture: `uploads/${fileName}`,
+        picture: picture ? `uploads/${fileName}` : null,
         parent: String(parent),
         phone: String(phone),
         whatsapp: String(whatsapp)

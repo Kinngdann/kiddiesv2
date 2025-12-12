@@ -1,5 +1,3 @@
-// "use client";
-
 import { usePaystackPayment } from "react-paystack";
 import { Button } from "@ui/button";
 import { Lock } from "lucide-react";
