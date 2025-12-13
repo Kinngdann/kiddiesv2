@@ -1,6 +1,6 @@
 import { usePaystackPayment } from "react-paystack";
 import { Button } from "@ui/button";
-import { Lock } from "lucide-react";
+// import { Lock } from "lucide-react";
 
 type VoteData = {
   voterName: string;
@@ -80,7 +80,7 @@ export default function PaystackPaymentProcessing({
 
   return (
     <Button onClick={onSubmit} type="submit">
-      Continue <Lock />
+      Continue
     </Button>
   );
 }

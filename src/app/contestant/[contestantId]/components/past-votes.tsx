@@ -65,7 +65,7 @@ export default function PastVotes({ voteLog }: voteProps) {
                   <TableHead>Name</TableHead>
                   <TableHead>Vote</TableHead>
                   <TableHead>Method</TableHead>
-                  <TableHead className="text-right">Time</TableHead>
+                  <TableHead className="text-right">Updated at</TableHead>
                 </TableRow>
               </TableHeader>
 
