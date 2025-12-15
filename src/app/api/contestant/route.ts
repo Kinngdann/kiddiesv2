@@ -58,3 +58,47 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+
+    const contestantId = formData.get("contestantId") as string | null;
+    const picture = formData.get("picture") as File | null;
+
+    if (!contestantId || !picture) {
+      return NextResponse.json(
+        { error: "contestantId and picture are required" },
+        { status: 400 }
+      );
+    }
+
+    const buffer = Buffer.from(await picture.arrayBuffer());
+
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    await mkdir(uploadDir, { recursive: true });
+
+    const fileName = `${Date.now()}-${contestantId}-${picture.name}`;
+    const filePath = path.join(uploadDir, fileName);
+
+    await writeFile(filePath, buffer);
+
+    const contestant = await prisma.contestant.update({
+      where: {
+        contestantId,
+      },
+      data: {
+        picture: `uploads/${fileName}`,
+      },
+    });
+
+    return NextResponse.json({ contestant }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      { error: "Failed to update contestant picture" },
+      { status: 500 }
+    );
+  }
+}
+
