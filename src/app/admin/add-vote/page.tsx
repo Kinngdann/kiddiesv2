@@ -46,6 +46,7 @@ export default function AddVote() {
     });
 
     const vote = await response.json();
+    console.log(vote);
 
     if (!response.ok) {
       setAddVoteError(true);
