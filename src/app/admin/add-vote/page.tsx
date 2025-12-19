@@ -40,7 +40,7 @@ export default function AddVote() {
   });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const response = await fetch("http://localhost:3000/api/vote", {
+    const response = await fetch("https://kidscrown.net/api/vote", {
       method: "POST",
       body: JSON.stringify({ ...data, voteMethod: "bank_tx" }),
     });

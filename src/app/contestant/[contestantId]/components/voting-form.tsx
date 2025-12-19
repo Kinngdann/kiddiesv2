@@ -183,9 +183,9 @@ export default function VotingForm({
                       </SelectTrigger>
                       <SelectContent className="border-0">
                         <SelectItem value="paystack">Paystack</SelectItem>
-                        <SelectItem value="bankTransfer">
+                        {/* <SelectItem value="bankTransfer">
                           Bank Transfer
-                        </SelectItem>
+                        </SelectItem> */}
                       </SelectContent>
                     </Select>
                   )}

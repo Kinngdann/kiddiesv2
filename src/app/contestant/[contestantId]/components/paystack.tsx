@@ -58,7 +58,7 @@ export default function PaystackPaymentProcessing({
       };
     }
 
-    await fetch("http://localhost:3000/api/vote", {
+    await fetch("https://kidscrown.net/api/vote", {
       method: "POST",
       body: JSON.stringify(voteData),
     });
