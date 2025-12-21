@@ -39,7 +39,7 @@ export async function GET(
     });
 
     const preceding = await prisma.contestant.findFirst({
-      where: { stage2vote: { gt: contestant.stage2vote } },
+      where: { stage2vote: { gt: contestant.stage2vote }, disabled: false },
       orderBy: { stage2vote: "asc" },
       select: { stage2vote: true },
     });

@@ -102,3 +102,23 @@ export async function PUT(request: NextRequest) {
   }
 }
 
+
+// export async function DELETE(request: NextRequest) {
+//   try {
+//     const result = await prisma.contestant.updateMany({
+//       where: {
+//         stage1vote: {
+//           lt: 300,
+//         },
+//       },
+//       data: {
+//         disabled: true,
+//       },
+//     });
+//     return NextResponse.json(result);
+
+
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
