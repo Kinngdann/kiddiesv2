@@ -29,7 +29,7 @@ export default async function Contestant({ params }: ContestantPageParams) {
 
   return (
     <section className="fb-col-wrapper pt-20 md:pt-32">
-      <Countdown target="2025-12-21" header="Stage 1 Ends in" />
+      <Countdown target="2025-12-25" header="The Final Ends in" />
       <Profile contestant={contestant} />
       <ShareLink />
       <HowToVote />

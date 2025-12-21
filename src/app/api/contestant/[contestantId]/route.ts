@@ -15,6 +15,7 @@ export async function GET(
         firstName: true,
         lastName: true,
         stage1vote: true,
+        stage2vote: true,
         gender: true,
         age: true,
         picture: true,
@@ -34,17 +35,17 @@ export async function GET(
     }
 
     const position = await prisma.contestant.count({
-      where: { stage1vote: { gte: contestant.stage1vote } },
+      where: { stage2vote: { gte: contestant.stage2vote }, disabled: false },
     });
 
     const preceding = await prisma.contestant.findFirst({
-      where: { stage1vote: { gt: contestant.stage1vote } },
-      orderBy: { stage1vote: "asc" },
-      select: { stage1vote: true },
+      where: { stage2vote: { gt: contestant.stage2vote } },
+      orderBy: { stage2vote: "asc" },
+      select: { stage2vote: true },
     });
 
     const voteDifference = preceding
-      ? preceding.stage1vote - contestant.stage1vote
+      ? preceding.stage2vote - contestant.stage2vote
       : null;
 
     return NextResponse.json({

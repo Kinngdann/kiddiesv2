@@ -31,7 +31,7 @@ type Props = {
     contestantId: string;
     name: string;
     gender: string;
-    stage1votes: number;
+    stage2votes: number;
   };
 };
 
@@ -46,7 +46,7 @@ export default function VotingForm({
   contestant,
   updateSuccessDialogData,
 }: Props) {
-  const { contestantId, name, stage1votes } = contestant;
+  const { contestantId, name, stage2votes } = contestant;
 
   const {
     register,
@@ -101,11 +101,16 @@ export default function VotingForm({
             <DialogTitle className="font-bold">
               Vote for <span className="font-black">{name}</span>
             </DialogTitle>
-            {contestant.stage1votes < 300 ? (
+            <DialogDescription>
+              Help <span className="font-bold">{contestant.name}</span> get{" "}
+              <span className="font-bold"> more votes</span> to win the contest
+              in this <span className="font-bold">final</span>.
+            </DialogDescription>
+            {/* {contestant.stage2votes < 300 ? (
               <DialogDescription>
                 Help <span className="font-bold">{contestant.name}</span> get{" "}
                 <span className="font-bold">
-                  {300 - stage1votes} more votes
+                  {300 - stage2votes} more votes
                 </span>{" "}
                 to qualify for the <span className="font-bold">final</span>.
               </DialogDescription>
@@ -116,7 +121,7 @@ export default function VotingForm({
                 {`${contestant.gender === "male" ? "him" : "her"}`}{" "}
                 <span className="font-bold">win</span> the contest.
               </DialogDescription>
-            )}
+            )} */}
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)}>

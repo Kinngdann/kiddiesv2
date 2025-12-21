@@ -19,6 +19,7 @@ type contestantProps = {
     gender: string;
     age: string;
     stage1vote: number;
+    stage2vote: number;
     position: number;
     picture: string;
     voteDifference: number;
@@ -101,11 +102,14 @@ export default function Profile({ contestant }: contestantProps) {
           </blockquote>
         </div>
         <div className="mt-8">
+          <span className="text-xs font-bold">
+            Stage 1: {contestant.stage1vote} votes
+          </span>
           <div className="flex justify-evenly bg-gray-500 border border-gray-300 p-4 rounded-sm text-gray-100">
             <div className="flex gap-2 items-center">
-              <span className="font-bold"> Votes:</span>
+              <span className="font-bold"> Final:</span>
               <span className="text-2xl font-black ">
-                {contestant.stage1vote}
+                {contestant.stage2vote}
               </span>
             </div>
             <div className="flex gap-2 items-center">
@@ -121,7 +125,7 @@ export default function Profile({ contestant }: contestantProps) {
             <p className="text-sm mt-2 font-bold">
               🏅Best performing contestant right now
             </p>
-          ) : contestant.position <= 20 ? (
+          ) : contestant.position <= 10 ? (
             <p className="text-sm mt-2">
               <span className="font-bold">Tip:</span> this contestant needs
               atleast{" "}
@@ -136,7 +140,8 @@ export default function Profile({ contestant }: contestantProps) {
           ) : (
             <p className="text-sm mt-2">
               {contestant.name} needs atleast{" "}
-              <span className="font-bold">300 votes</span> to get to the final
+              <span className="font-bold">more votes</span> to get to win the
+              contest
             </p>
           )}
         </div>
@@ -148,7 +153,7 @@ export default function Profile({ contestant }: contestantProps) {
               contestantId: contestant.contestantId,
               name: contestant.name,
               gender: contestant.gender,
-              stage1votes: contestant.stage1vote,
+              stage2votes: contestant.stage2vote,
             }}
           />
         </div>

@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const updatedContestant = await prisma.contestant.update({
       where: { contestantId: data.contestantId, disabled: false },
       data: {
-        stage1vote: { increment: votesToAdd },
+        stage2vote: { increment: votesToAdd },
         voteLogs: {
           create: {
             voterName: data.voterName,
