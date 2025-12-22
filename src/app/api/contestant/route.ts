@@ -3,6 +3,43 @@ import { NextRequest, NextResponse } from "next/server"
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 
+export async function GET(request: NextRequest) {
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const ranking = searchParams.get("rank");
+
+    let contestants;
+
+    if (ranking === "top") {
+      contestants = await prisma.contestant.findMany({
+        where: { disabled: false },
+        select: {
+          contestantId: true,
+          firstName: true,
+          lastName: true,
+          stage2vote: true,
+          gender: true,
+          age: true,
+          picture: true,
+        },
+        orderBy: {
+          stage2vote: "desc",
+        },
+        take: 5,
+      });
+    } else {
+      contestants = await prisma.contestant.findMany({ where: { disabled: false } })
+    }
+
+    return NextResponse.json(contestants);
+
+  } catch (error) {
+    console.log(error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
