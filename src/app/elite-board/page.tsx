@@ -28,8 +28,8 @@ export default async function EliteBoard() {
         <h3 className="text-center font-bold text-2xl">
           Real-time top contestants
         </h3>
-        <p className="text-center">Winners of the contest will emerge in:</p>
-        <Countdown target="2025-12-26" header="" />
+        <p className="text-center">Winners of the Kiddies Crown Contest </p>
+        {/* <Countdown target="2025-12-26" header="" /> */}
       </div>
       <div className="grid gap-6">
         {topContestants.map((contestant, index) => (

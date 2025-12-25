@@ -153,11 +153,14 @@ export default function VotingForm({
                   control={control}
                   rules={{ required: "Number of votes required" }}
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      disabled
+                      onValueChange={field.onChange}
+                      value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Number of votes" />
+                        <SelectValue placeholder="Voting is disabled" />
                       </SelectTrigger>
-                      <SelectContent className="border-0">
+                      <SelectContent className="border-0 ">
                         {[5, 10, 20, 50, 100, 200, 500, 1000].map((v) => (
                           <SelectItem key={v} value={String(v)}>
                             {v} votes
