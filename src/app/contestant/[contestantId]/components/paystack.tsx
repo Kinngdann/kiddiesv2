@@ -1,6 +1,6 @@
 import { usePaystackPayment } from "react-paystack";
 import { Button } from "@ui/button";
-// import { Lock } from "lucide-react";
+import { toast } from "sonner";
 
 type VoteData = {
   voterName: string;
@@ -28,47 +28,44 @@ export default function PaystackPaymentProcessing({
   closeAllDialog,
   paymentData,
 }: PaystackProps) {
-  // console.log("key", process.env.PAYSTACK_PUBLIC_KEY);
   const ref = new Date().getTime().toString();
 
   const config = {
     reference: ref,
     email: `${paymentData.contestantId}-${ref}@kidscrown.net`,
     amount: Number(paymentData.voteData.numberOfVotes) * (COST_PER_VOTE * 100),
-    publicKey: "pk_live_eae4d935752ac44cb106cc9ff96e7519b17c9660",
-    // publicKey: process.env.PAYSTACK_PUBLIC_KEY || "",
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "",
   };
 
   const initializePayment = usePaystackPayment(config);
 
-  const onSuccess = async () => {
-    let voteData;
-    voteData = {
+  const onSuccess = async (transaction: { reference: string }) => {
+    const voteData = {
       contestantId: paymentData.contestantId,
       voterName: paymentData.voteData.voterName,
-      amount: Number(paymentData.voteData.numberOfVotes) * COST_PER_VOTE,
       voteMethod: "paystack",
-      // keepAnonymous: paymentData.voteData.keepAnonymous,
+      reference: transaction.reference,
+      ...(paymentData.voteData.keepAnonymous !== null && {
+        keepAnonymous: paymentData.voteData.keepAnonymous,
+      }),
     };
 
-    if (paymentData.voteData.keepAnonymous !== null) {
-      voteData = {
-        ...voteData,
-        keepAnonymous: paymentData.voteData.keepAnonymous,
-      };
-    }
-
-    await fetch("https://kidscrown.net/api/vote", {
+    const response = await fetch("/api/vote", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(voteData),
     });
 
-    console.log("Payment successful");
-    updateSuccessDialogData(paymentData.voteData.numberOfVotes);
+    if (response.ok) {
+      updateSuccessDialogData(paymentData.voteData.numberOfVotes);
+    } else {
+      const err = await response.json().catch(() => ({}));
+      toast.error(err.error ?? "Vote could not be recorded. Contact support.");
+    }
   };
 
   const onClose = () => {
-    console.log("Payment closed");
+    // Payment modal closed without completing
   };
 
   const onSubmit = () => {

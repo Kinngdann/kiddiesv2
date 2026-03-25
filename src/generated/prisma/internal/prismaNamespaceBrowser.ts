@@ -50,7 +50,8 @@ export const AnyNull = runtime.objectEnumValues.instances.AnyNull
 
 export const ModelName = {
   Contestant: 'Contestant',
-  VoteLog: 'VoteLog'
+  VoteLog: 'VoteLog',
+  ContestConfig: 'ContestConfig'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,6 +69,7 @@ export const ContestantScalarFieldEnum = {
   age: 'age',
   bio: 'bio',
   picture: 'picture',
+  videoUrl: 'videoUrl',
   parent: 'parent',
   phone: 'phone',
   whatsapp: 'whatsapp',
@@ -95,6 +97,19 @@ export const VoteLogScalarFieldEnum = {
 } as const
 
 export type VoteLogScalarFieldEnum = (typeof VoteLogScalarFieldEnum)[keyof typeof VoteLogScalarFieldEnum]
+
+
+export const ContestConfigScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  votingOpen: 'votingOpen',
+  currentStage: 'currentStage',
+  stageLabel: 'stageLabel',
+  endDate: 'endDate',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContestConfigScalarFieldEnum = (typeof ContestConfigScalarFieldEnum)[keyof typeof ContestConfigScalarFieldEnum]
 
 
 export const SortOrder = {

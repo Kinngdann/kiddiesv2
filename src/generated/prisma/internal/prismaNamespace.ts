@@ -88,12 +88,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 6.19.0
- * Query Engine version: 2ba551f319ab1df4bc874a89965d8b3641056773
+ * Prisma Client JS version: 6.19.1
+ * Query Engine version: c2990dca591cba766e3b7ef5d9e8a84796e47ab7
  */
 export const prismaVersion: PrismaVersion = {
-  client: "6.19.0",
-  engine: "2ba551f319ab1df4bc874a89965d8b3641056773"
+  client: "6.19.1",
+  engine: "c2990dca591cba766e3b7ef5d9e8a84796e47ab7"
 }
 
 /**
@@ -391,7 +391,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Contestant: 'Contestant',
-  VoteLog: 'VoteLog'
+  VoteLog: 'VoteLog',
+  ContestConfig: 'ContestConfig'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "contestant" | "voteLog"
+    modelProps: "contestant" | "voteLog" | "contestConfig"
     txIsolationLevel: never
   }
   model: {
@@ -559,6 +560,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ContestConfig: {
+      payload: Prisma.$ContestConfigPayload<ExtArgs>
+      fields: Prisma.ContestConfigFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ContestConfigFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ContestConfigFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload>
+        }
+        findFirst: {
+          args: Prisma.ContestConfigFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ContestConfigFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload>
+        }
+        findMany: {
+          args: Prisma.ContestConfigFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload>[]
+        }
+        create: {
+          args: Prisma.ContestConfigCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload>
+        }
+        createMany: {
+          args: Prisma.ContestConfigCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.ContestConfigDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload>
+        }
+        update: {
+          args: Prisma.ContestConfigUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload>
+        }
+        deleteMany: {
+          args: Prisma.ContestConfigDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ContestConfigUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.ContestConfigUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContestConfigPayload>
+        }
+        aggregate: {
+          args: Prisma.ContestConfigAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateContestConfig>
+        }
+        groupBy: {
+          args: Prisma.ContestConfigGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ContestConfigGroupByOutputType>[]
+        }
+        findRaw: {
+          args: Prisma.ContestConfigFindRawArgs<ExtArgs>
+          result: Prisma.JsonObject
+        }
+        aggregateRaw: {
+          args: Prisma.ContestConfigAggregateRawArgs<ExtArgs>
+          result: Prisma.JsonObject
+        }
+        count: {
+          args: Prisma.ContestConfigCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ContestConfigCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -585,6 +660,7 @@ export const ContestantScalarFieldEnum = {
   age: 'age',
   bio: 'bio',
   picture: 'picture',
+  videoUrl: 'videoUrl',
   parent: 'parent',
   phone: 'phone',
   whatsapp: 'whatsapp',
@@ -612,6 +688,19 @@ export const VoteLogScalarFieldEnum = {
 } as const
 
 export type VoteLogScalarFieldEnum = (typeof VoteLogScalarFieldEnum)[keyof typeof VoteLogScalarFieldEnum]
+
+
+export const ContestConfigScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  votingOpen: 'votingOpen',
+  currentStage: 'currentStage',
+  stageLabel: 'stageLabel',
+  endDate: 'endDate',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContestConfigScalarFieldEnum = (typeof ContestConfigScalarFieldEnum)[keyof typeof ContestConfigScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -800,6 +889,7 @@ export interface PrismaClientOptions {
 export type GlobalOmitConfig = {
   contestant?: Prisma.ContestantOmit
   voteLog?: Prisma.VoteLogOmit
+  contestConfig?: Prisma.ContestConfigOmit
 }
 
 /* Types for Logging */

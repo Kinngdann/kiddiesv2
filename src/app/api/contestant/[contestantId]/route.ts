@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -16,9 +17,11 @@ export async function GET(
         lastName: true,
         stage1vote: true,
         stage2vote: true,
+        stage3vote: true,
         gender: true,
         age: true,
         picture: true,
+        videoUrl: true,
         disabled: true,
         voteLogs: {
           orderBy: { createdAt: "desc" },
@@ -34,24 +37,32 @@ export async function GET(
       );
     }
 
+    const config = await getContestConfig();
+    const field = stageVoteField(config.currentStage);
+    const contestantCurrentVotes = contestant[field] ?? 0;
+
     const position = await prisma.contestant.count({
-      where: { stage2vote: { gte: contestant.stage2vote }, disabled: false },
+      where: { [field]: { gte: contestantCurrentVotes }, disabled: false },
     });
 
     const preceding = await prisma.contestant.findFirst({
-      where: { stage2vote: { gt: contestant.stage2vote }, disabled: false },
-      orderBy: { stage2vote: "asc" },
-      select: { stage2vote: true },
+      where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
+      orderBy: { [field]: "asc" },
+      select: { stage1vote: true, stage2vote: true, stage3vote: true },
     });
 
-    const voteDifference = preceding
-      ? preceding.stage2vote - contestant.stage2vote
-      : null;
+    const precedingVotes = preceding ? preceding[field] : null;
+    const voteDifference = precedingVotes !== null ? precedingVotes - contestantCurrentVotes : null;
 
     return NextResponse.json({
       ...contestant,
+      currentVotes: contestantCurrentVotes,
+      currentStage: config.currentStage,
+      stageLabel: config.stageLabel,
+      votingOpen: config.votingOpen,
+      endDate: config.endDate?.toISOString() ?? null,
       position,
-      voteDifference
+      voteDifference,
     });
   } catch (error) {
     console.error(error);

@@ -10,4 +10,5 @@
  */
 export type * from './models/Contestant'
 export type * from './models/VoteLog'
+export type * from './models/ContestConfig'
 export type * from './commonInputTypes'

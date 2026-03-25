@@ -24,9 +24,11 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Checkbox } from "@ui/checkbox";
 import BankTransferInstructions from "./bank-transfer-intructions";
 import PaystackPaymentProcessing from "./paystack";
+import { VOTE_BUNDLES } from "@/lib/vote-bundles";
 
 type Props = {
   updateSuccessDialogData: (numberOfVotes: string) => void;
+  isVotingOpen: boolean;
   contestant: {
     contestantId: string;
     name: string;
@@ -45,8 +47,9 @@ interface IFormInput {
 export default function VotingForm({
   contestant,
   updateSuccessDialogData,
+  isVotingOpen,
 }: Props) {
-  const { contestantId, name, stage2votes } = contestant;
+  const { contestantId, name } = contestant;
 
   const {
     register,
@@ -141,35 +144,53 @@ export default function VotingForm({
                 <FieldError>{errors.voterName?.message}</FieldError>
               </Field>
 
-              {/* NUMBER OF VOTES */}
+              {/* VOTE BUNDLES */}
               <Field className="grid gap-3">
-                <FieldLabel htmlFor="numberOfVotes">
-                  Select number of votes{" "}
+                <FieldLabel>
+                  Choose a vote pack{" "}
                   <span className="font-bold">(₦50/vote)</span>
                 </FieldLabel>
 
-                <Controller
-                  name="numberOfVotes"
-                  control={control}
-                  rules={{ required: "Number of votes required" }}
-                  render={({ field }) => (
-                    <Select
-                      disabled
-                      onValueChange={field.onChange}
-                      value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Voting is disabled" />
-                      </SelectTrigger>
-                      <SelectContent className="border-0 ">
-                        {[5, 10, 20, 50, 100, 200, 500, 1000].map((v) => (
-                          <SelectItem key={v} value={String(v)}>
-                            {v} votes
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
+                {!isVotingOpen ? (
+                  <p className="text-sm text-muted-foreground border rounded-md px-3 py-2">
+                    Voting is currently closed
+                  </p>
+                ) : (
+                  <Controller
+                    name="numberOfVotes"
+                    control={control}
+                    rules={{ required: "Please select a vote pack" }}
+                    render={({ field }) => (
+                      <div className="grid grid-cols-2 gap-2">
+                        {VOTE_BUNDLES.map((bundle) => {
+                          const selected = field.value === String(bundle.votes);
+                          return (
+                            <button
+                              key={bundle.votes}
+                              type="button"
+                              onClick={() => field.onChange(String(bundle.votes))}
+                              className={`relative rounded-md border-2 p-3 text-left transition-all ${
+                                selected
+                                  ? "border-teal-500 bg-teal-50"
+                                  : "border-input hover:border-teal-300"
+                              } ${bundle.highlight ? "ring-1 ring-teal-400" : ""}`}>
+                              {bundle.highlight && (
+                                <span className="absolute -top-2 right-2 text-[10px] font-bold bg-teal-500 text-white px-1.5 py-0.5 rounded-full">
+                                  Popular
+                                </span>
+                              )}
+                              <p className="font-bold text-sm">{bundle.label}</p>
+                              <p className="text-lg font-black">{bundle.votes} votes</p>
+                              <p className="text-xs text-muted-foreground">
+                                ₦{bundle.price.toLocaleString()}
+                              </p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  />
+                )}
 
                 <FieldError>{errors.numberOfVotes?.message}</FieldError>
               </Field>
@@ -226,6 +247,18 @@ export default function VotingForm({
                       </div>
                     )}
                   />
+                </div>
+              )}
+
+              {/* TRUST SIGNALS */}
+              {isPaystackSelected && (
+                <div className="flex items-center gap-2 rounded-md bg-gray-50 border px-3 py-2 text-xs text-muted-foreground">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-green-600 fill-current">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z"/>
+                  </svg>
+                  <span>
+                    Secured by <strong>Paystack</strong> — votes credited instantly after payment
+                  </span>
                 </div>
               )}
 

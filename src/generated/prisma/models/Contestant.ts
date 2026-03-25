@@ -47,6 +47,7 @@ export type ContestantMinAggregateOutputType = {
   age: string | null
   bio: string | null
   picture: string | null
+  videoUrl: string | null
   parent: string | null
   phone: string | null
   whatsapp: string | null
@@ -67,6 +68,7 @@ export type ContestantMaxAggregateOutputType = {
   age: string | null
   bio: string | null
   picture: string | null
+  videoUrl: string | null
   parent: string | null
   phone: string | null
   whatsapp: string | null
@@ -87,6 +89,7 @@ export type ContestantCountAggregateOutputType = {
   age: number
   bio: number
   picture: number
+  videoUrl: number
   parent: number
   phone: number
   whatsapp: number
@@ -121,6 +124,7 @@ export type ContestantMinAggregateInputType = {
   age?: true
   bio?: true
   picture?: true
+  videoUrl?: true
   parent?: true
   phone?: true
   whatsapp?: true
@@ -141,6 +145,7 @@ export type ContestantMaxAggregateInputType = {
   age?: true
   bio?: true
   picture?: true
+  videoUrl?: true
   parent?: true
   phone?: true
   whatsapp?: true
@@ -161,6 +166,7 @@ export type ContestantCountAggregateInputType = {
   age?: true
   bio?: true
   picture?: true
+  videoUrl?: true
   parent?: true
   phone?: true
   whatsapp?: true
@@ -268,6 +274,7 @@ export type ContestantGroupByOutputType = {
   age: string
   bio: string | null
   picture: string | null
+  videoUrl: string | null
   parent: string
   phone: string
   whatsapp: string
@@ -311,6 +318,7 @@ export type ContestantWhereInput = {
   age?: Prisma.StringFilter<"Contestant"> | string
   bio?: Prisma.StringNullableFilter<"Contestant"> | string | null
   picture?: Prisma.StringNullableFilter<"Contestant"> | string | null
+  videoUrl?: Prisma.StringNullableFilter<"Contestant"> | string | null
   parent?: Prisma.StringFilter<"Contestant"> | string
   phone?: Prisma.StringFilter<"Contestant"> | string
   whatsapp?: Prisma.StringFilter<"Contestant"> | string
@@ -332,6 +340,7 @@ export type ContestantOrderByWithRelationInput = {
   age?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   picture?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
   parent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsapp?: Prisma.SortOrder
@@ -358,6 +367,7 @@ export type ContestantWhereUniqueInput = Prisma.AtLeast<{
   age?: Prisma.StringFilter<"Contestant"> | string
   bio?: Prisma.StringNullableFilter<"Contestant"> | string | null
   picture?: Prisma.StringNullableFilter<"Contestant"> | string | null
+  videoUrl?: Prisma.StringNullableFilter<"Contestant"> | string | null
   parent?: Prisma.StringFilter<"Contestant"> | string
   disabled?: Prisma.BoolFilter<"Contestant"> | boolean
   stage1vote?: Prisma.IntFilter<"Contestant"> | number
@@ -377,6 +387,7 @@ export type ContestantOrderByWithAggregationInput = {
   age?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   picture?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
   parent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsapp?: Prisma.SortOrder
@@ -405,6 +416,7 @@ export type ContestantScalarWhereWithAggregatesInput = {
   age?: Prisma.StringWithAggregatesFilter<"Contestant"> | string
   bio?: Prisma.StringNullableWithAggregatesFilter<"Contestant"> | string | null
   picture?: Prisma.StringNullableWithAggregatesFilter<"Contestant"> | string | null
+  videoUrl?: Prisma.StringNullableWithAggregatesFilter<"Contestant"> | string | null
   parent?: Prisma.StringWithAggregatesFilter<"Contestant"> | string
   phone?: Prisma.StringWithAggregatesFilter<"Contestant"> | string
   whatsapp?: Prisma.StringWithAggregatesFilter<"Contestant"> | string
@@ -425,6 +437,7 @@ export type ContestantCreateInput = {
   age: string
   bio?: string | null
   picture?: string | null
+  videoUrl?: string | null
   parent: string
   phone: string
   whatsapp: string
@@ -446,6 +459,7 @@ export type ContestantUncheckedCreateInput = {
   age: string
   bio?: string | null
   picture?: string | null
+  videoUrl?: string | null
   parent: string
   phone: string
   whatsapp: string
@@ -466,6 +480,7 @@ export type ContestantUpdateInput = {
   age?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parent?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsapp?: Prisma.StringFieldUpdateOperationsInput | string
@@ -486,6 +501,7 @@ export type ContestantUncheckedUpdateInput = {
   age?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parent?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsapp?: Prisma.StringFieldUpdateOperationsInput | string
@@ -507,6 +523,7 @@ export type ContestantCreateManyInput = {
   age: string
   bio?: string | null
   picture?: string | null
+  videoUrl?: string | null
   parent: string
   phone: string
   whatsapp: string
@@ -526,6 +543,7 @@ export type ContestantUpdateManyMutationInput = {
   age?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parent?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsapp?: Prisma.StringFieldUpdateOperationsInput | string
@@ -545,6 +563,7 @@ export type ContestantUncheckedUpdateManyInput = {
   age?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parent?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsapp?: Prisma.StringFieldUpdateOperationsInput | string
@@ -565,6 +584,7 @@ export type ContestantCountOrderByAggregateInput = {
   age?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   picture?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
   parent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsapp?: Prisma.SortOrder
@@ -591,6 +611,7 @@ export type ContestantMaxOrderByAggregateInput = {
   age?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   picture?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
   parent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsapp?: Prisma.SortOrder
@@ -611,6 +632,7 @@ export type ContestantMinOrderByAggregateInput = {
   age?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   picture?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
   parent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   whatsapp?: Prisma.SortOrder
@@ -681,6 +703,7 @@ export type ContestantCreateWithoutVoteLogsInput = {
   age: string
   bio?: string | null
   picture?: string | null
+  videoUrl?: string | null
   parent: string
   phone: string
   whatsapp: string
@@ -701,6 +724,7 @@ export type ContestantUncheckedCreateWithoutVoteLogsInput = {
   age: string
   bio?: string | null
   picture?: string | null
+  videoUrl?: string | null
   parent: string
   phone: string
   whatsapp: string
@@ -736,6 +760,7 @@ export type ContestantUpdateWithoutVoteLogsInput = {
   age?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parent?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsapp?: Prisma.StringFieldUpdateOperationsInput | string
@@ -755,6 +780,7 @@ export type ContestantUncheckedUpdateWithoutVoteLogsInput = {
   age?: Prisma.StringFieldUpdateOperationsInput | string
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parent?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   whatsapp?: Prisma.StringFieldUpdateOperationsInput | string
@@ -806,6 +832,7 @@ export type ContestantSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   age?: boolean
   bio?: boolean
   picture?: boolean
+  videoUrl?: boolean
   parent?: boolean
   phone?: boolean
   whatsapp?: boolean
@@ -830,6 +857,7 @@ export type ContestantSelectScalar = {
   age?: boolean
   bio?: boolean
   picture?: boolean
+  videoUrl?: boolean
   parent?: boolean
   phone?: boolean
   whatsapp?: boolean
@@ -841,7 +869,7 @@ export type ContestantSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ContestantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contestantId" | "firstName" | "lastName" | "gender" | "age" | "bio" | "picture" | "parent" | "phone" | "whatsapp" | "disabled" | "stage1vote" | "stage2vote" | "stage3vote" | "createdAt" | "updatedAt", ExtArgs["result"]["contestant"]>
+export type ContestantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contestantId" | "firstName" | "lastName" | "gender" | "age" | "bio" | "picture" | "videoUrl" | "parent" | "phone" | "whatsapp" | "disabled" | "stage1vote" | "stage2vote" | "stage3vote" | "createdAt" | "updatedAt", ExtArgs["result"]["contestant"]>
 export type ContestantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   voteLogs?: boolean | Prisma.Contestant$voteLogsArgs<ExtArgs>
   _count?: boolean | Prisma.ContestantCountOutputTypeDefaultArgs<ExtArgs>
@@ -861,6 +889,7 @@ export type $ContestantPayload<ExtArgs extends runtime.Types.Extensions.Internal
     age: string
     bio: string | null
     picture: string | null
+    videoUrl: string | null
     parent: string
     phone: string
     whatsapp: string
@@ -1271,6 +1300,7 @@ export interface ContestantFieldRefs {
   readonly age: Prisma.FieldRef<"Contestant", 'String'>
   readonly bio: Prisma.FieldRef<"Contestant", 'String'>
   readonly picture: Prisma.FieldRef<"Contestant", 'String'>
+  readonly videoUrl: Prisma.FieldRef<"Contestant", 'String'>
   readonly parent: Prisma.FieldRef<"Contestant", 'String'>
   readonly phone: Prisma.FieldRef<"Contestant", 'String'>
   readonly whatsapp: Prisma.FieldRef<"Contestant", 'String'>

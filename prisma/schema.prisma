@@ -17,6 +17,7 @@ model Contestant {
   age          String
   bio          String?
   picture      String?
+  videoUrl     String?
   parent       String
   phone        String    @unique
   whatsapp     String    @unique
@@ -36,10 +37,20 @@ model VoteLog {
   numberOfVotes Int
   voteMethod    VoteMethod
   contestantId  String
-  keepAnonymous Boolean @default(false)
+  keepAnonymous Boolean    @default(false)
   contestant    Contestant @relation(fields: [contestantId], references: [contestantId])
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @default(now()) @updatedAt
+}
+
+model ContestConfig {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  key          String    @unique
+  votingOpen   Boolean   @default(false)
+  currentStage Int       @default(1)
+  stageLabel   String    @default("Stage 1")
+  endDate      DateTime?
+  updatedAt    DateTime  @default(now()) @updatedAt
 }
 
 enum VoteMethod {

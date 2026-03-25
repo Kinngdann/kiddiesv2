@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
-import { Ubuntu_Sans } from "next/font/google";
+import { Nunito, Fredoka } from "next/font/google";
 import Navigation from "@components/navigation";
 import { Toaster } from "@ui/sonner";
 
 import "./globals.css";
 
-const ubuntu = Ubuntu_Sans({
-  variable: "--font-ubuntu-sans",
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+const fredoka = Fredoka({
+  variable: "--font-fredoka",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -23,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${ubuntu.variable} antialiased bg-[url(../components/images/organic2-slider-bg.webp)] bg-repeat bg-scroll`}>
+        className={`${nunito.variable} ${fredoka.variable} antialiased`}>
         <Navigation />
         {children}
         <Toaster />

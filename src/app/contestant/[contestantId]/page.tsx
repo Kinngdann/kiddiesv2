@@ -3,19 +3,66 @@ import HowToVote from "./components/how-to-vote";
 import NoUserFound from "./components/not-found";
 import Profile from "./components/profile";
 import { ShareLink } from "./components/share";
+import type { Metadata } from "next";
 
 interface ContestantPageParams {
-  params: {
-    contestantId: string;
+  params: Promise<{ contestantId: string }>;
+}
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+async function fetchContestant(contestantId: string) {
+  const res = await fetch(`${APP_URL}/api/contestant/${contestantId}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+export async function generateMetadata({ params }: ContestantPageParams): Promise<Metadata> {
+  const { contestantId } = await params;
+  const user = await fetchContestant(contestantId);
+
+  if (!user) {
+    return { title: "Contestant Not Found | Kiddies Crown" };
+  }
+
+  const name = `${user.firstName} ${user.lastName ?? ""}`.trim();
+  const votes = user.currentVotes ?? user.stage2vote ?? 0;
+  const pronoun = user.gender === "male" ? "him" : "her";
+  const title = `Vote for ${name} — Contestant #${user.contestantId} | Kiddies Crown`;
+  const description = `${name} has ${votes} votes. Help ${pronoun} reach the top! Vote now for ₦50 per vote.`;
+  const imageUrl = user.picture
+    ? `${APP_URL}/${user.picture}`
+    : `${APP_URL}/logo.svg`;
+  const pageUrl = `${APP_URL}/contestant/${contestantId}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      siteName: "Kiddies Crown",
+      images: [{ url: imageUrl, width: 360, height: 460, alt: name }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 
 export default async function Contestant({ params }: ContestantPageParams) {
   const { contestantId } = await params;
 
-  const response = await fetch(
-    `http://localhost:3000/api/contestant/${contestantId}`
-  );
+  const response = await fetch(`${APP_URL}/api/contestant/${contestantId}`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     return <NoUserFound />;
@@ -27,11 +74,20 @@ export default async function Contestant({ params }: ContestantPageParams) {
     name: `${user.firstName} ${user.lastName ?? ""}`,
   };
 
+  const countdownTarget = user.endDate
+    ? new Date(user.endDate).toISOString().split("T")[0]
+    : "";
+  const countdownHeader = user.stageLabel
+    ? `${user.stageLabel} Ends in`
+    : "Contest Ends in";
+
   return (
     <section className="fb-col-wrapper pt-20 md:pt-32">
-      <Countdown target="2025-12-26" header="The Final Ends in" />
-      <Profile contestant={contestant} />
-      <ShareLink />
+      {countdownTarget && (
+        <Countdown target={countdownTarget} header={countdownHeader} />
+      )}
+      <Profile contestant={contestant} isVotingOpen={user.votingOpen ?? false} />
+      <ShareLink contestantName={contestant.name} />
       <HowToVote />
     </section>
   );

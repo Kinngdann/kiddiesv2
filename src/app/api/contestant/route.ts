@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { getContestConfig, stageVoteField } from "@/lib/contest-config"
 import { NextRequest, NextResponse } from "next/server"
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
@@ -12,22 +13,27 @@ export async function GET(request: NextRequest) {
     let contestants;
 
     if (ranking === "top") {
-      contestants = await prisma.contestant.findMany({
+      const config = await getContestConfig();
+      const field = stageVoteField(config.currentStage);
+
+      const raw = await prisma.contestant.findMany({
         where: { disabled: false },
         select: {
           contestantId: true,
           firstName: true,
           lastName: true,
+          stage1vote: true,
           stage2vote: true,
+          stage3vote: true,
           gender: true,
           age: true,
           picture: true,
         },
-        orderBy: {
-          stage2vote: "desc",
-        },
+        orderBy: { [field]: "desc" },
         take: 5,
       });
+
+      contestants = raw.map((c) => ({ ...c, currentVotes: c[field] }));
     } else {
       contestants = await prisma.contestant.findMany({ where: { disabled: false } })
     }
@@ -52,6 +58,7 @@ export async function POST(request: NextRequest) {
     const phone = formData.get("phone");
     const whatsapp = formData.get("whatsapp");
     const picture = formData.get('picture') as File | null;
+    const videoUrl = formData.get("videoUrl") as string | null;
 
     let fileName;
 
@@ -82,6 +89,7 @@ export async function POST(request: NextRequest) {
         gender: String(gender),
         age: String(age),
         picture: picture ? `uploads/${fileName}` : null,
+        videoUrl: videoUrl || null,
         parent: String(parent),
         phone: String(phone),
         whatsapp: String(whatsapp)

@@ -47,6 +47,7 @@ interface IFormInput {
   whatsapp: string;
   picture: FileList | null;
   parentName: string;
+  videoUrl?: string;
 }
 
 export default function RegistrationForm() {
@@ -96,6 +97,7 @@ export default function RegistrationForm() {
     formData.append("parent", data.parentName);
     formData.append("phone", data.phone);
     formData.append("whatsapp", data.whatsapp);
+    if (data.videoUrl) formData.append("videoUrl", data.videoUrl);
 
     if (data.picture && data.picture.length > 0) {
       formData.append("picture", data.picture[0]);
@@ -242,6 +244,19 @@ export default function RegistrationForm() {
                     )}
                   </div>
                   <FieldError> {errors.picture?.message} </FieldError>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="videoUrl">Video Link <span className="text-muted-foreground font-normal">(optional)</span></FieldLabel>
+                  <Input
+                    {...register("videoUrl", {
+                      pattern: {
+                        value: /^https?:\/\/.+/,
+                        message: "Please enter a valid URL",
+                      },
+                    })}
+                    placeholder="YouTube or TikTok link"
+                  />
+                  <FieldError>{errors.videoUrl?.message}</FieldError>
                 </Field>
                 <FieldSeparator className="my-6" />
                 <Field>

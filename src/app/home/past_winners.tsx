@@ -1,13 +1,16 @@
 import Image from "next/image";
 import { contestants } from "./contestants_data";
-import winnerImage from "./images/winner.jpg";
 
 export default function PastWinners() {
   return (
     <section className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="leading-9 font-black">Meet Our Past Winners</h2>
-        <p className="font-bold">
+        <div className="inline-flex items-center gap-2 bg-yellow-100 border border-yellow-200 text-yellow-700 text-sm font-bold px-4 py-1.5 rounded-full">
+          <span>👑</span>
+          <span>Hall of Fame</span>
+        </div>
+        <h2 className="leading-9 font-bold">Meet Our Past Winners</h2>
+        <p className="font-semibold text-gray-600">
           Some of our prestige winners in the past contest
         </p>
       </div>
@@ -15,9 +18,9 @@ export default function PastWinners() {
         {contestants.map((contestant, index) => (
           <div
             key={index}
-            className="relative group border border-input shadow-lg rounded-t-lg overflow-clip">
-            <div className="absolute z-2 top-4 rounded-r-sm text-[0.7rem] font-black text-white bg-teal-600 px-2 py-1">
-              Grand Winner <br /> {contestant.edition}
+            className="relative group border border-sky-100 shadow-lg rounded-xl overflow-clip hover:shadow-xl hover:-translate-y-1 transition duration-300">
+            <div className="absolute z-2 top-4 rounded-r-full text-[0.7rem] font-bold text-white bg-gradient-to-r from-sky-400 to-cyan-500 px-3 py-1">
+              👑 Grand Winner <br /> {contestant.edition}
             </div>
             <div className="h-70 overflow-clip">
               <Image
@@ -29,16 +32,16 @@ export default function PastWinners() {
               />
             </div>
             <div className="px-4 py-4 text-center space-y-2">
-              <h3 className="font-black leading-6">{contestant.name}</h3>
+              <h3 className="font-bold leading-6">{contestant.name}</h3>
               <div className="flex gap-4 justify-center">
                 <p className="text-sm">
-                  Gender: <span className="font-bold">{contestant.gender}</span>
+                  Gender: <span className="font-bold text-sky-500">{contestant.gender}</span>
                 </p>
                 <p className="text-sm">
-                  Age: <span className="font-semibold">{contestant.age}</span>
+                  Age: <span className="font-semibold text-sky-500">{contestant.age}</span>
                 </p>
               </div>
-              <blockquote className="italic text-black/70 mt-4">
+              <blockquote className="italic text-gray-500 mt-4 text-sm">
                 {contestant.note}
               </blockquote>
             </div>

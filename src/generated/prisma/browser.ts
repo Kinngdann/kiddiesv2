@@ -27,3 +27,8 @@ export type Contestant = Prisma.ContestantModel
  * 
  */
 export type VoteLog = Prisma.VoteLogModel
+/**
+ * Model ContestConfig
+ * 
+ */
+export type ContestConfig = Prisma.ContestConfigModel
