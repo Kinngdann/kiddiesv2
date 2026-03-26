@@ -6,7 +6,7 @@ import Footer from "@/src/components/footer";
 
 export default function Home() {
   return (
-    <main className="fb-col-wrapper space-y-16">
+    <main className="fb-col-wrapper space-y-12">
       <HeroPage />
       <ActivityRoadmap />
       <About />

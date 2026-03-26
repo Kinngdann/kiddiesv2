@@ -23,18 +23,18 @@ export default function Footer() {
   return (
     <footer className="full-bleed mt-32" id="contact">
       {/* CTA Banner */}
-      <div className="flex justify-between flex-col lg:flex-row text-white bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500 px-8 py-6 lg:px-34 lg:py-8">
+      <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center bg-[#FACC14] border-b-2 border-black px-8 py-8 lg:px-20 lg:py-10 gap-6">
         <div className="font-bold space-y-1">
-          <div className="inline-flex items-center gap-2 bg-white/20 text-white text-sm font-bold px-3 py-1 rounded-full mb-2">
+          <div className="inline-flex items-center gap-2 bg-black text-[#FACC14] text-xs font-bold px-3 py-1 rounded-full mb-3 tracking-wider uppercase">
             <span>✨</span>
             <span>Join the Fun</span>
           </div>
-          <h2 className="text-white">Ready to Enroll?</h2>
-          <p className="text-white/80">Take the opportunity now!</p>
+          <h2 className="text-black text-[clamp(1.6rem,4vw,2.4rem)] leading-tight">Ready to Enroll?</h2>
+          <p className="text-black/70 font-semibold">Take the opportunity now!</p>
         </div>
         <Button
           asChild
-          className="h-12 px-8 font-bold mt-8 lg:mt-0 bg-yellow-400 hover:bg-yellow-300 text-gray-900 max-w-fit rounded-full shadow-lg"
+          className="h-12 px-8 font-bold bg-black hover:bg-gray-900 text-[#FACC14] max-w-fit rounded-full border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,0.3)]"
           size="lg">
           <Link href="/register" target="_blank">
             🎉 REGISTER NOW

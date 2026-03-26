@@ -44,9 +44,7 @@ type contestantProps = {
 export default function Profile({ contestant, isVotingOpen }: contestantProps) {
   const router = useRouter();
   const [successDialog, setSuccessDialog] = useState<boolean>(false);
-  const [successDialogData, setSuccessDialogData] = useState<{
-    vote: string;
-  }>();
+  const [successDialogData, setSuccessDialogData] = useState<{ vote: string }>();
 
   const updateSuccessDialogData = (numberOfVotes: string) => {
     setSuccessDialogData({ vote: numberOfVotes });
@@ -73,56 +71,60 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
         vote={successDialogData?.vote || "0"}
         contestantName={contestant.name}
       />
-      <div className="full-bleed max-h-96 md:max-h-100 overflow-clip md:rounded-xl md:col-start-2 md:col-span-6">
+
+      {/* Profile photo */}
+      <div className="full-bleed max-h-96 md:max-h-[480px] overflow-hidden md:rounded-2xl md:border-2 md:border-black md:shadow-[6px_6px_0px_#111] md:col-start-2 md:col-span-6">
         <Image
           alt="Profile picture"
           src={srcImage}
           width={360}
           height={460}
           priority
-          className="min-w-full"
+          className="min-w-full object-cover"
         />
       </div>
+
+      {/* Info column */}
       <div className="md:col-start-8 md:col-span-6 space-y-6">
         <div>
-          <p className="font-bold text-sm text-gray-500 bg-gray-200 w-fit rounded-xs px-2">
-            Contestant No: <span>{contestant.contestantId}</span>
-          </p>
-          <h1 className="leading-12 font-black text-3xl md:text-4xl">
+          <span className="inline-block bg-black text-[#FACC14] font-bold text-[0.65rem] px-3 py-1 rounded-full mb-2 tracking-wide">
+            Contestant #{contestant.contestantId}
+          </span>
+          <h1 className="font-bold text-black text-3xl md:text-4xl leading-tight">
             {contestant.name}
           </h1>
-          <div className="flex items-center gap-4">
-            <p className="md:text-md">
-              Gender:{" "}
-              <span className="font-bold">{capitalize(contestant.gender)}</span>
-            </p>
-            <p className="md:text-md">
-              Age: <span className="font-semibold">{contestant.age}</span>
-            </p>
+          <div className="flex items-center gap-3 mt-2 flex-wrap">
+            <span className="bg-[#A855F7] text-white font-bold text-xs px-3 py-1 rounded-full border-2 border-[#A855F7]">
+              {capitalize(contestant.gender)}
+            </span>
+            <span className="bg-[#22C55E] text-white font-bold text-xs px-3 py-1 rounded-full border-2 border-[#22C55E]">
+              Age {contestant.age}
+            </span>
           </div>
-          <blockquote className="mt-6 border-l-2 border-input pl-4 text-muted-foreground italic text-left">
+          <blockquote className="mt-4 border-l-4 border-[#FACC14] pl-4 text-gray-600 italic text-left text-sm leading-relaxed">
             {contestant.bio ??
-              `${
-                contestant.gender === "male" ? "He" : "She"
-              } is a wonderful child with a bright, loving spirit, growing each day into someone any mother would be proud to call her own.`}
+              `${contestant.gender === "male" ? "He" : "She"} is a wonderful child with a bright, loving spirit, growing each day into someone any mother would be proud to call her own.`}
           </blockquote>
         </div>
-        <div className="mt-8 space-y-3">
+
+        <div className="space-y-3">
           {/* Vote count + position */}
-          <div className="flex justify-evenly bg-gray-500 border border-gray-300 p-4 rounded-sm text-gray-100">
-            <div className="flex gap-2 items-center">
-              <span className="font-bold">{contestant.stageLabel ?? "Votes"}:</span>
-              <span className="text-2xl font-black">
+          <div className="flex gap-4">
+            <div className="flex-1 bg-[#111] border-2 border-black rounded-2xl p-4 text-center shadow-[4px_4px_0px_#111]">
+              <p className="text-gray-400 font-bold text-xs uppercase tracking-wider">
+                {contestant.stageLabel ?? "Votes"}
+              </p>
+              <p className="text-[#FACC14] font-black text-3xl leading-tight">
                 {contestant.currentVotes ?? contestant.stage2vote}
-              </span>
+              </p>
             </div>
-            <div className="flex gap-2 items-center">
-              <span className="font-bold">Position:</span>
-              <span className="text-2xl font-black">
-                {contestant.position <= 20
-                  ? nthPosition(contestant.position)
-                  : "Nil"}
-              </span>
+            <div className="flex-1 bg-[#A855F7] border-2 border-black rounded-2xl p-4 text-center shadow-[4px_4px_0px_#111]">
+              <p className="text-white/70 font-bold text-xs uppercase tracking-wider">
+                Position
+              </p>
+              <p className="text-white font-black text-3xl leading-tight">
+                {contestant.position <= 20 ? nthPosition(contestant.position) : "–"}
+              </p>
             </div>
           </div>
 
@@ -139,36 +141,46 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
                     {earned.map((m) => (
                       <span
                         key={m.votes}
-                        className={`inline-flex items-center gap-1 text-xs font-semibold border rounded-full px-2.5 py-0.5 ${m.color}`}>
+                        className={`inline-flex items-center gap-1 text-xs font-bold border-2 rounded-full px-3 py-1 ${m.color}`}
+                      >
                         {m.emoji} {m.label}
                       </span>
                     ))}
                   </div>
                 )}
                 {next && (
-                  <p className="text-xs text-muted-foreground">
-                    Next badge: <span className="font-semibold">{next.emoji} {next.label}</span> at {next.votes} votes
-                    {" "}— only <span className="font-semibold text-foreground">{next.votes - votes} more</span> to go!
+                  <p className="text-xs text-gray-500 font-semibold">
+                    Next badge:{" "}
+                    <span className="font-bold text-black">
+                      {next.emoji} {next.label}
+                    </span>{" "}
+                    at {next.votes} votes —{" "}
+                    <span className="font-bold text-black">
+                      {next.votes - votes} more
+                    </span>{" "}
+                    to go!
                   </p>
                 )}
               </div>
             );
           })()}
 
-          {/* Progress bar toward next rank */}
+          {/* Progress toward next rank */}
           {contestant.position === 1 && contestant.voteDifference === null ? (
-            <p className="text-sm font-bold text-teal-600">
-              Leading the contest right now!
-            </p>
+            <div className="bg-[#FACC14] border-2 border-black rounded-xl px-4 py-2 shadow-[3px_3px_0px_#111]">
+              <p className="font-bold text-black text-sm">
+                🏆 Leading the contest right now!
+              </p>
+            </div>
           ) : contestant.voteDifference !== null && contestant.voteDifference > 0 ? (
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs text-muted-foreground">
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs text-gray-500 font-semibold">
                 <span>Progress to {nthPosition(contestant.position - 1)} place</span>
                 <span>{contestant.voteDifference} votes needed</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+              <div className="w-full bg-gray-100 border-2 border-black rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-teal-500 h-2.5 rounded-full transition-all"
+                  className="bg-[#FACC14] h-3 rounded-full transition-all"
                   style={{
                     width: `${Math.min(
                       95,
@@ -180,23 +192,24 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
                   }}
                 />
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-gray-500 font-semibold">
                 Only{" "}
-                <span className="font-bold text-foreground">
+                <span className="font-bold text-black">
                   {contestant.voteDifference} more votes
                 </span>{" "}
                 to reach{" "}
-                <span className="font-bold">
+                <span className="font-bold text-black">
                   {nthPosition(contestant.position - 1)} place
                 </span>
               </p>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-gray-500 font-semibold">
               Keep voting to help {contestant.name} climb the ranks!
             </p>
           )}
         </div>
+
         <div className="flex items-center gap-4">
           <PastVotes voteLog={contestant.voteLogs} />
           <VotingForm
@@ -211,33 +224,35 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
           />
         </div>
 
-        {contestant.videoUrl && (() => {
-          const youtubeMatch = contestant.videoUrl.match(
-            /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
-          );
-          if (youtubeMatch) {
-            return (
-              <div className="mt-4 rounded-sm overflow-hidden aspect-video w-full">
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeMatch[1]}`}
-                  title={`${contestant.name} video`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
-              </div>
+        {contestant.videoUrl &&
+          (() => {
+            const youtubeMatch = contestant.videoUrl!.match(
+              /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
             );
-          }
-          return (
-            <a
-              href={contestant.videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 flex items-center gap-2 text-sm font-semibold underline underline-offset-4 text-teal-600">
-              Watch {contestant.name}&apos;s video
-            </a>
-          );
-        })()}
+            if (youtubeMatch) {
+              return (
+                <div className="mt-4 rounded-2xl overflow-hidden border-2 border-black shadow-[4px_4px_0px_#111] aspect-video w-full">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeMatch[1]}`}
+                    title={`${contestant.name} video`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+              );
+            }
+            return (
+              <a
+                href={contestant.videoUrl!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 font-bold text-sm underline underline-offset-4 text-[#A855F7] hover:opacity-70 transition"
+              >
+                Watch {contestant.name}&apos;s video →
+              </a>
+            );
+          })()}
       </div>
     </>
   );
