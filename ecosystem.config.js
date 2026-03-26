@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "kiddiesv2",
-      script: "node_modules/.bin/next",
-      args: "start -p 3009",
+      script: "pnpm",
+      args: "start",
       cwd: "./",
       instances: 1,
       autorestart: true,
