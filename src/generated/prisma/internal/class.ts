@@ -34,6 +34,10 @@ const config: runtime.GetPrismaClientConfig = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -47,6 +51,7 @@ const config: runtime.GetPrismaClientConfig = {
     "db"
   ],
   "activeProvider": "mongodb",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -55,8 +60,8 @@ const config: runtime.GetPrismaClientConfig = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Contestant {\n  id           String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  contestantId String    @unique\n  firstName    String\n  lastName     String\n  gender       String\n  age          String\n  bio          String?\n  picture      String?\n  videoUrl     String?\n  parent       String\n  phone        String    @unique\n  whatsapp     String    @unique\n  disabled     Boolean   @default(false)\n  stage1vote   Int       @default(1)\n  stage2vote   Int       @default(0)\n  stage3vote   Int       @default(0)\n  createdAt    DateTime  @default(now())\n  updatedAt    DateTime  @default(now()) @updatedAt\n  voteLogs     VoteLog[]\n}\n\nmodel VoteLog {\n  id            String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  voterName     String\n  amount        Int\n  numberOfVotes Int\n  voteMethod    VoteMethod\n  contestantId  String\n  keepAnonymous Boolean    @default(false)\n  contestant    Contestant @relation(fields: [contestantId], references: [contestantId])\n  createdAt     DateTime   @default(now())\n  updatedAt     DateTime   @default(now()) @updatedAt\n}\n\nmodel ContestConfig {\n  id           String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  key          String    @unique\n  votingOpen   Boolean   @default(false)\n  currentStage Int       @default(1)\n  stageLabel   String    @default(\"Stage 1\")\n  endDate      DateTime?\n  updatedAt    DateTime  @default(now()) @updatedAt\n}\n\nenum VoteMethod {\n  paystack\n  bank_tx\n}\n",
-  "inlineSchemaHash": "303390ddc9e17a5303623a950006df6fe3abccf8e761d38329d149648f99f6d7",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client\"\n  output        = \"../src/generated/prisma\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Contestant {\n  id           String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  contestantId String    @unique\n  firstName    String\n  lastName     String\n  gender       String\n  age          String\n  bio          String?\n  picture      String?\n  videoUrl     String?\n  parent       String\n  phone        String    @unique\n  whatsapp     String    @unique\n  disabled     Boolean   @default(false)\n  stage1vote   Int       @default(1)\n  stage2vote   Int       @default(0)\n  stage3vote   Int       @default(0)\n  createdAt    DateTime  @default(now())\n  updatedAt    DateTime  @default(now()) @updatedAt\n  voteLogs     VoteLog[]\n}\n\nmodel VoteLog {\n  id            String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  voterName     String\n  amount        Int\n  numberOfVotes Int\n  voteMethod    VoteMethod\n  contestantId  String\n  keepAnonymous Boolean    @default(false)\n  contestant    Contestant @relation(fields: [contestantId], references: [contestantId])\n  createdAt     DateTime   @default(now())\n  updatedAt     DateTime   @default(now()) @updatedAt\n}\n\nmodel ContestConfig {\n  id           String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  key          String    @unique\n  votingOpen   Boolean   @default(false)\n  currentStage Int       @default(1)\n  stageLabel   String    @default(\"Stage 1\")\n  endDate      DateTime?\n  updatedAt    DateTime  @default(now()) @updatedAt\n}\n\nenum VoteMethod {\n  paystack\n  bank_tx\n}\n",
+  "inlineSchemaHash": "c6c62788fc3c39f64626f18260ca013d382e999ed7b4c892d5666c7f4d0d4c22",
   "copyEngine": true,
   "runtimeDataModel": {
     "models": {},
