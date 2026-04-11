@@ -2,14 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { nthPosition } from "@/utils/format-position";
+import { capitalize } from "@/utils/capitalize";
 import Image from "next/image";
 import Link from "next/link";
 import { TrendingUp, TrendingDown, Crown } from "lucide-react";
+const malePic = "/avatar-male.jpg";
+const femalePic = "/avatar-female.jpg";
 
 type Contestant = {
   contestantId: string;
   firstName: string;
   lastName: string;
+  gender: string;
   currentVotes: number;
   picture: string | null;
 };
@@ -106,19 +110,14 @@ export default function Leaderboard({ initial }: Props) {
                 </div>
 
                 {/* Photo */}
-                <div className="w-18 h-22 overflow-hidden shrink-0">
-                  {contestant.picture ? (
-                    <Image
-                      alt={`${contestant.firstName} ${contestant.lastName}`}
-                      src={`/${contestant.picture}`}
-                      width={360}
-                      height={460}
-                      priority
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200" />
-                  )}
+                <div className="w-16 h-24 overflow-hidden shrink-0 relative">
+                  <Image
+                    alt={`${contestant.firstName} ${contestant.lastName}`}
+                    src={contestant.picture ? `/${contestant.picture}` : contestant.gender?.toLowerCase() === "male" ? malePic : femalePic}
+                    fill
+                    priority
+                    className="object-cover object-top"
+                  />
                 </div>
 
                 {/* Info */}
@@ -127,7 +126,7 @@ export default function Leaderboard({ initial }: Props) {
                     #{contestant.contestantId}
                   </p>
                   <p className="font-bold text-black text-sm">
-                    {contestant.firstName} {contestant.lastName}
+                    {[contestant.firstName, contestant.lastName].filter(Boolean).map(capitalize).join(" ")}
                   </p>
                   <div className="flex items-center gap-2 flex-wrap mt-1">
                     <span className="font-black text-sm text-black">

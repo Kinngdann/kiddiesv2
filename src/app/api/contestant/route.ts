@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     }
 
 
-    if (!firstName || !lastName || !age || !phone || !whatsapp)
+    if (!firstName || !age || !phone || !whatsapp)
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
 
     const totalContestants = await prisma.contestant.count();

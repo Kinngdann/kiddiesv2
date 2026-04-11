@@ -43,7 +43,7 @@ export default function NoUserFound() {
           <EmptyDescription>
             If this seems wrong, confirm the ID in the URL:{" "}
             <code className="bg-gray-200 rounded-xs px-0.5 font-semibold">
-              kidscrown.net/contestant/[ID]
+              leadritehub.com/contestant/[ID]
             </code>
           </EmptyDescription>
         </EmptyHeader>

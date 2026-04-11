@@ -6,11 +6,18 @@ import PastVotes from "./past-votes";
 import { capitalize } from "@/utils/capitalize";
 import { nthPosition } from "@/utils/format-position";
 import { getEarnedMilestones, getNextMilestone } from "@/utils/vote-milestones";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ShowVoteSuccess } from "./voting-success";
 import { useRouter } from "next/navigation";
-import malePic from "./images/ma.jpg";
-import femalePic from "./images/fe.jpg";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@ui/dialog";
+const malePic = "/avatar-male.jpg";
+const femalePic = "/avatar-female.jpg";
 
 type contestantProps = {
   contestant: {
@@ -44,7 +51,25 @@ type contestantProps = {
 export default function Profile({ contestant, isVotingOpen }: contestantProps) {
   const router = useRouter();
   const [successDialog, setSuccessDialog] = useState<boolean>(false);
-  const [successDialogData, setSuccessDialogData] = useState<{ vote: string }>();
+  const [successDialogData, setSuccessDialogData] = useState<{
+    vote: string;
+  }>();
+  const [urgencyOpen, setUrgencyOpen] = useState(false);
+  const urgencyShown = useRef(false);
+  const [triggerVoteForm, setTriggerVoteForm] = useState(false);
+
+  const STAGE_THRESHOLD = 300;
+  const currentVotes = contestant.currentVotes ?? contestant.stage2vote ?? 0;
+  const votesNeeded = STAGE_THRESHOLD - currentVotes;
+
+  useEffect(() => {
+    if (urgencyShown.current || currentVotes >= STAGE_THRESHOLD) return;
+    const timer = setTimeout(() => {
+      setUrgencyOpen(true);
+      urgencyShown.current = true;
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [currentVotes]);
 
   const updateSuccessDialogData = (numberOfVotes: string) => {
     setSuccessDialogData({ vote: numberOfVotes });
@@ -57,8 +82,8 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
   };
 
   const srcImage =
-    contestant.picture === null
-      ? contestant.gender === "male"
+    !contestant.picture
+      ? contestant.gender?.toLowerCase() === "male"
         ? malePic
         : femalePic
       : `/${contestant.picture}`;
@@ -72,8 +97,47 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
         contestantName={contestant.name}
       />
 
+      {/* Urgency popup — shown after 5s if below threshold */}
+      <Dialog open={urgencyOpen} onOpenChange={setUrgencyOpen}>
+        <DialogContent className="bg-white sm:max-w-sm border-2 border-black shadow-[6px_6px_0px_#111]">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-black font-bold text-xl">
+              {contestant.name} needs your help!
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 text-sm leading-relaxed">
+              To advance to the next stage, contestants must reach{" "}
+              <span className="font-bold text-black">
+                {STAGE_THRESHOLD} votes
+              </span>
+              . {contestant.name} currently has{" "}
+              <span className="font-bold text-black">{currentVotes} votes</span>{" "}
+              and needs{" "}
+              <span className="font-bold text-[#A855F7]">
+                {votesNeeded} more
+              </span>{" "}
+              to qualify.
+              <br />
+              <br />
+              Every vote counts, be the reason they make it to the next round!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 mt-2">
+            <button
+              onClick={() => { setUrgencyOpen(false); setTriggerVoteForm(true); }}
+              className="flex-1 text-center bg-[#FACC14] text-black font-bold text-sm px-6 py-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition">
+              Vote Now
+            </button>
+            <button
+              onClick={() => setUrgencyOpen(false)}
+              className="text-sm font-semibold text-gray-400 hover:text-gray-600 transition px-3">
+              Dismiss
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Profile photo */}
-      <div className="full-bleed max-h-96 md:max-h-[480px] overflow-hidden md:rounded-2xl md:border-2 md:border-black md:shadow-[6px_6px_0px_#111] md:col-start-2 md:col-span-6">
+      <div className="full-bleed max-h-96 md:max-h-120 overflow-hidden md:rounded-2xl md:border-2 md:border-black md:shadow-[6px_6px_0px_#111] md:col-start-2 md:col-span-6">
         <Image
           alt="Profile picture"
           src={srcImage}
@@ -103,27 +167,30 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
           </div>
           <blockquote className="mt-4 border-l-4 border-[#FACC14] pl-4 text-gray-600 italic text-left text-sm leading-relaxed">
             {contestant.bio ??
-              `${contestant.gender === "male" ? "He" : "She"} is a wonderful child with a bright, loving spirit, growing each day into someone any mother would be proud to call her own.`}
+              `${contestant.gender?.toLowerCase() === "male" ? "He" : "She"} is a wonderful child with a bright, loving spirit, growing each day into someone any mother would be proud to call her own.`}
           </blockquote>
         </div>
 
         <div className="space-y-3">
           {/* Vote count + position */}
           <div className="flex gap-4">
-            <div className="flex-1 bg-[#111] border-2 border-black rounded-2xl p-4 text-center shadow-[4px_4px_0px_#111]">
-              <p className="text-gray-400 font-bold text-xs uppercase tracking-wider">
+            <div className="flex-1 bg-sky-100 border border-sky-200 rounded-2xl p-4 text-center">
+              <p className="text-sky-500 font-bold text-xs uppercase tracking-wider">
                 {contestant.stageLabel ?? "Votes"}
               </p>
-              <p className="text-[#FACC14] font-black text-3xl leading-tight">
-                {contestant.currentVotes ?? contestant.stage2vote}
+              <p className="text-sky-900 font-black text-3xl leading-tight">
+                {contestant.currentVotes ?? contestant.stage2vote}{" "}
+                <span className="text-lg font-bold">votes</span>
               </p>
             </div>
-            <div className="flex-1 bg-[#A855F7] border-2 border-black rounded-2xl p-4 text-center shadow-[4px_4px_0px_#111]">
-              <p className="text-white/70 font-bold text-xs uppercase tracking-wider">
+            <div className="flex-1 bg-sky-100 border border-sky-200 rounded-2xl p-4 text-center">
+              <p className="text-sky-500 font-bold text-xs uppercase tracking-wider">
                 Position
               </p>
-              <p className="text-white font-black text-3xl leading-tight">
-                {contestant.position <= 20 ? nthPosition(contestant.position) : "–"}
+              <p className="text-sky-900 font-black text-3xl leading-tight">
+                {contestant.position <= 20
+                  ? nthPosition(contestant.position)
+                  : "–"}
               </p>
             </div>
           </div>
@@ -141,8 +208,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
                     {earned.map((m) => (
                       <span
                         key={m.votes}
-                        className={`inline-flex items-center gap-1 text-xs font-bold border-2 rounded-full px-3 py-1 ${m.color}`}
-                      >
+                        className={`inline-flex items-center gap-1 text-xs font-bold border rounded-full px-3 py-1 ${m.color}`}>
                         {m.emoji} {m.label}
                       </span>
                     ))}
@@ -167,27 +233,32 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
 
           {/* Progress toward next rank */}
           {contestant.position === 1 && contestant.voteDifference === null ? (
-            <div className="bg-[#FACC14] border-2 border-black rounded-xl px-4 py-2 shadow-[3px_3px_0px_#111]">
-              <p className="font-bold text-black text-sm">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2">
+              <p className="font-bold text-amber-700 text-sm">
                 🏆 Leading the contest right now!
               </p>
             </div>
-          ) : contestant.voteDifference !== null && contestant.voteDifference > 0 ? (
+          ) : contestant.voteDifference !== null &&
+            contestant.voteDifference > 0 &&
+            (contestant.currentVotes ?? contestant.stage2vote) > 1 &&
+            contestant.position - 1 <= 20 ? (
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-gray-500 font-semibold">
-                <span>Progress to {nthPosition(contestant.position - 1)} place</span>
+                <span>
+                  Progress to {nthPosition(contestant.position - 1)} place
+                </span>
                 <span>{contestant.voteDifference} votes needed</span>
               </div>
-              <div className="w-full bg-gray-100 border-2 border-black rounded-full h-3 overflow-hidden">
+              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-[#FACC14] h-3 rounded-full transition-all"
+                  className="bg-blue-400 h-2 rounded-full transition-all"
                   style={{
                     width: `${Math.min(
                       95,
                       ((contestant.currentVotes ?? contestant.stage2vote) /
                         ((contestant.currentVotes ?? contestant.stage2vote) +
                           contestant.voteDifference)) *
-                        100
+                        100,
                     )}%`,
                   }}
                 />
@@ -215,6 +286,8 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
           <VotingForm
             updateSuccessDialogData={updateSuccessDialogData}
             isVotingOpen={isVotingOpen}
+            triggerOpen={triggerVoteForm}
+            onTriggerConsumed={() => setTriggerVoteForm(false)}
             contestant={{
               contestantId: contestant.contestantId,
               name: contestant.name,
@@ -227,7 +300,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
         {contestant.videoUrl &&
           (() => {
             const youtubeMatch = contestant.videoUrl!.match(
-              /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+              /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
             );
             if (youtubeMatch) {
               return (
@@ -247,8 +320,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
                 href={contestant.videoUrl!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 font-bold text-sm underline underline-offset-4 text-[#A855F7] hover:opacity-70 transition"
-              >
+                className="mt-4 inline-flex items-center gap-2 font-bold text-sm underline underline-offset-4 text-[#A855F7] hover:opacity-70 transition">
                 Watch {contestant.name}&apos;s video →
               </a>
             );

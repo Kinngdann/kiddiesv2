@@ -1,270 +1,220 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
+import childrenImg from "@/src/app/home/images/children.jpg";
 
-/* ─── Deterministic floating confetti ─────────────────────────────── */
-const CONFETTI = [
-  { x: 6,  y: 7,  c: "#FACC14", s: 14, r: 15,  d: 0.0 },
-  { x: 91, y: 4,  c: "#A855F7", s: 9,  r: -22, d: 0.4 },
-  { x: 96, y: 28, c: "#FB923C", s: 12, r: 45,  d: 0.9 },
-  { x: 3,  y: 40, c: "#22C55E", s: 8,  r: -35, d: 0.3 },
-  { x: 94, y: 55, c: "#F472B6", s: 7,  r: 60,  d: 1.1 },
-  { x: 4,  y: 70, c: "#FACC14", s: 11, r: -18, d: 0.6 },
-  { x: 90, y: 80, c: "#22C55E", s: 8,  r: 30,  d: 0.8 },
-  { x: 10, y: 88, c: "#A855F7", s: 10, r: -50, d: 0.2 },
-  { x: 82, y: 13, c: "#FACC14", s: 7,  r: 20,  d: 1.3 },
-  { x: 50, y: 2,  c: "#FB923C", s: 9,  r: -12, d: 0.7 },
-  { x: 22, y: 52, c: "#F472B6", s: 6,  r: 50,  d: 1.0 },
-  { x: 75, y: 46, c: "#FACC14", s: 13, r: -28, d: 0.5 },
-  { x: 36, y: 83, c: "#22C55E", s: 7,  r: 38,  d: 1.5 },
-  { x: 66, y: 93, c: "#A855F7", s: 9,  r: -42, d: 0.1 },
-  { x: 44, y: 18, c: "#FB923C", s: 6,  r: 55,  d: 0.8 },
-  { x: 58, y: 75, c: "#F472B6", s: 8,  r: -8,  d: 1.2 },
-  { x: 30, y: 30, c: "#FACC14", s: 5,  r: 70,  d: 0.35 },
-  { x: 70, y: 62, c: "#22C55E", s: 10, r: -60, d: 0.95 },
-];
-
-const PRIZES = [
-  { rank: "1ST PLACE",  icon: "🏆", amount: "₦500,000", note: "Cash + 3-Year Scholarship", bg: "#FACC14", fg: "#000000" },
-  { rank: "2ND PLACE",  icon: "🥈", amount: "₦300,000", note: "Cash Prize",               bg: "#A855F7", fg: "#ffffff" },
-  { rank: "3RD PLACE",  icon: "🥉", amount: "₦200,000", note: "Cash Prize",               bg: "#22C55E", fg: "#ffffff" },
-];
-
-const ZIG = (
-  <svg viewBox="0 0 300 14" className="w-full" preserveAspectRatio="none" aria-hidden>
-    <polyline
-      points="0,7 15,0 30,7 45,0 60,7 75,0 90,7 105,0 120,7 135,0 150,7 165,0 180,7 195,0 210,7 225,0 240,7 255,0 270,7 285,0 300,7"
-      fill="none" stroke="currentColor" strokeWidth="2.5"
-      strokeLinecap="round" strokeLinejoin="round"
-    />
+/* Decorative ✕ cluster */
+const XMark = ({
+  color = "#FACC14",
+  size = 22,
+}: {
+  color?: string;
+  size?: number;
+}) => (
+  <svg
+    width={size * 1.6}
+    height={size * 1.6}
+    viewBox="0 0 40 40"
+    fill="none"
+    aria-hidden>
+    <text x="0" y="14" fontSize="14" fontWeight="900" fill={color}>
+      ✕
+    </text>
+    <text x="16" y="26" fontSize="14" fontWeight="900" fill={color}>
+      ✕
+    </text>
+    <text x="8" y="38" fontSize="14" fontWeight="900" fill={color}>
+      ✕
+    </text>
   </svg>
 );
 
-/* ─── Stagger helpers ──────────────────────────────────────────────── */
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 28 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] },
-});
+/* Decorative ★ cluster */
+const Stars = ({ color = "#FACC14" }: { color?: string }) => (
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden>
+    <text x="0" y="18" fontSize="16" fontWeight="900" fill={color}>
+      ★
+    </text>
+    <text x="20" y="32" fontSize="12" fontWeight="900" fill={color}>
+      ★
+    </text>
+    <text x="6" y="44" fontSize="10" fontWeight="900" fill={color}>
+      ★
+    </text>
+  </svg>
+);
 
 export default function CampaignPoster() {
   return (
-    <>
-      {/* Global keyframes */}
-      <style>{`
-        @keyframes float-up {
-          0%,100% { transform: translateY(0)   rotate(var(--r)); opacity:.7; }
-          50%      { transform: translateY(-22px) rotate(calc(var(--r) + 18deg)); opacity:1; }
-        }
-        @keyframes spin-badge {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes star-pulse {
-          0%,100% { opacity:.06; transform:scale(1); }
-          50%      { opacity:.10; transform:scale(1.05); }
-        }
-        .confetti-item { animation: float-up var(--dur) ease-in-out infinite; animation-delay: var(--del); }
-        .bg-star       { animation: star-pulse 5s ease-in-out infinite; }
-        .spin-badge    { animation: spin-badge 14s linear infinite; }
-      `}</style>
-
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center py-16 px-4 relative overflow-hidden">
-
-        {/* ── Full-page ambient glow ── */}
-        <div className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(250,204,20,0.07) 0%, transparent 70%)" }}
-        />
-
-        {/* ── Poster card ─────────────────────────────────────── */}
+    <div className="min-h-screen bg-gray-200 flex items-center justify-center py-12 px-4 overflow-auto">
+      {/* ── POSTER ─────────────────────────────────────────────────── */}
+      <div
+        className="relative bg-white overflow-hidden w-full"
+        style={{
+          maxWidth: 560,
+          fontFamily: "var(--font-fredoka), sans-serif",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+        }}>
+        {/* ── EMOTIONAL HOOK BANNER ── */}
         <div
-          className="relative w-full overflow-hidden bg-[#0A0A0A]"
-          style={{
-            maxWidth: 540,
-            aspectRatio: "4/5",
-            border: "3px solid #FACC14",
-            boxShadow: "0 0 0 1px #000, 0 0 60px rgba(250,204,20,0.25), 0 0 120px rgba(250,204,20,0.10)",
-          }}
-        >
-
-          {/* ── Background watermark star ── */}
-          <div className="bg-star absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-            <span style={{ fontSize: "min(80vw, 520px)", lineHeight: 1, color: "#FACC14" }}>★</span>
-          </div>
-
-          {/* ── Diagonal stripe accent ── */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div style={{
-              position: "absolute",
-              top: "-60%", left: "-20%",
-              width: "140%", height: "60%",
-              background: "linear-gradient(180deg, rgba(250,204,20,0.04) 0%, transparent 100%)",
-              transform: "rotate(-8deg)",
-            }} />
-          </div>
-
-          {/* ── Floating confetti ── */}
-          {CONFETTI.map((p, i) => (
-            <span
-              key={i}
-              className="confetti-item absolute pointer-events-none select-none font-black"
-              style={{
-                left: `${p.x}%`, top: `${p.y}%`,
-                fontSize: p.s, color: p.c,
-                "--r":   `${p.r}deg`,
-                "--dur": `${5 + (i % 4)}s`,
-                "--del": `${p.d}s`,
-              } as React.CSSProperties}
-            >★</span>
-          ))}
-
-          {/* ── Poster content ── */}
-          <div className="relative z-10 flex flex-col justify-between h-full p-6 sm:p-8">
-
-            {/* TOP ROW */}
-            <motion.div {...fadeUp(0)} className="flex items-center justify-between">
-              <Image src="/logo.svg" alt="Logo" width={72} height={22} className="opacity-90" />
-              <div
-                className="spin-badge flex items-center justify-center rounded-full border-2 border-[#FACC14] text-[#FACC14] font-black"
-                style={{ width: 54, height: 54, fontSize: 10, textAlign: "center", letterSpacing: "0.06em" }}
-              >
-                <svg viewBox="0 0 100 100" className="absolute w-full h-full">
-                  <defs>
-                    <path id="arc" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" />
-                  </defs>
-                  <text fontSize="12" fontWeight="900" fill="#FACC14" fontFamily="var(--font-fredoka)">
-                    <textPath href="#arc" startOffset="0%">★ LEADRITEHUB.COM ★ 2025 ★</textPath>
-                  </text>
-                </svg>
-                <span style={{ fontSize: 20 }}>★</span>
-              </div>
-            </motion.div>
-
-            {/* HEADLINE */}
-            <motion.div {...fadeUp(0.1)} className="text-center leading-none space-y-1 -mt-2">
-              <p className="text-white/30 font-black tracking-[0.45em] text-[0.6rem] uppercase">
-                Nigeria&apos;s Most Exciting
-              </p>
-              <div className="font-black uppercase leading-[0.88]">
-                <span className="block text-white/25 text-[min(5vw,1.1rem)] tracking-[0.35em]">THE</span>
-                <span
-                  className="block text-[min(22vw,6.2rem)]"
-                  style={{
-                    color: "#FACC14",
-                    textShadow: "0 0 30px rgba(250,204,20,0.6), 0 0 80px rgba(250,204,20,0.25)",
-                  }}
-                >FUTURE</span>
-                <span
-                  className="block text-[min(26vw,7.2rem)]"
-                  style={{
-                    color: "transparent",
-                    WebkitTextStroke: "min(0.8vw,3px) #FACC14",
-                    textShadow: "0 0 50px rgba(250,204,20,0.2)",
-                  }}
-                >STAR</span>
-                <span
-                  className="block text-white text-[min(9vw,2.4rem)] tracking-[0.18em]"
-                >CHALLENGE</span>
-              </div>
-
-              <div className="flex items-center gap-3 pt-1 text-[#FACC14]/50">
-                {ZIG}
-              </div>
-
-              <div className="flex items-center justify-center gap-2 pt-1">
-                {["KIDS CONTEST", "AGES 0–10", "VOTE ₦50"].map((tag, i) => (
-                  <span
-                    key={tag}
-                    className="font-black text-[0.5rem] tracking-widest px-2.5 py-1 rounded-full border uppercase"
-                    style={{
-                      borderColor: ["#FACC14","#A855F7","#22C55E"][i],
-                      color: ["#FACC14","#A855F7","#22C55E"][i],
-                    }}
-                  >{tag}</span>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* PRIZES */}
-            <motion.div {...fadeUp(0.2)} className="grid grid-cols-3 gap-2">
-              {PRIZES.map((p, i) => (
-                <motion.div
-                  key={p.rank}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + i * 0.1, duration: 0.5, ease: [0.34, 1.4, 0.64, 1] }}
-                  className="rounded-xl p-3 text-center border-2 border-black"
-                  style={{
-                    background: p.bg,
-                    color: p.fg,
-                    boxShadow: "4px 4px 0px #000",
-                  }}
-                >
-                  <span className="text-lg leading-none block">{p.icon}</span>
-                  <p className="font-black text-[0.5rem] tracking-widest uppercase mt-1 opacity-70">{p.rank}</p>
-                  <p className="font-black leading-tight" style={{ fontSize: "min(4vw,1.05rem)" }}>{p.amount}</p>
-                  <p className="font-bold opacity-60 mt-0.5" style={{ fontSize: "0.48rem" }}>{p.note}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* CTA BLOCK */}
-            <motion.div {...fadeUp(0.4)} className="space-y-2.5">
-              {/* Register bar */}
-              <div
-                className="rounded-xl border-2 border-black text-center py-3 px-4"
-                style={{ background: "#FACC14", boxShadow: "5px 5px 0px #000" }}
-              >
-                <p className="text-black font-black tracking-[0.3em] text-[0.55rem] uppercase">
-                  Register Your Child At
-                </p>
-                <p className="text-black font-black tracking-wide" style={{ fontSize: "min(6vw,1.6rem)" }}>
-                  leadritehub.com
-                </p>
-              </div>
-
-              {/* Bottom info strip */}
-              <div className="flex items-center gap-2">
-                <div className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-center">
-                  <p className="text-white/40 font-bold text-[0.48rem] tracking-widest uppercase">Vote from</p>
-                  <p className="text-[#FACC14] font-black text-sm leading-tight">₦50 / vote</p>
-                </div>
-                <div className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-center">
-                  <p className="text-white/40 font-bold text-[0.48rem] tracking-widest uppercase">Open to</p>
-                  <p className="text-[#A855F7] font-black text-sm leading-tight">All Nigeria</p>
-                </div>
-                <div className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-center">
-                  <p className="text-white/40 font-bold text-[0.48rem] tracking-widest uppercase">Ages</p>
-                  <p className="text-[#22C55E] font-black text-sm leading-tight">0 – 10 yrs</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* FOOTER */}
-            <motion.div {...fadeUp(0.5)} className="flex items-center justify-between border-t border-white/10 pt-3">
-              <p className="text-white/20 font-bold text-[0.48rem] tracking-widest uppercase">
-                The Future Star Challenge
-              </p>
-              <div className="flex gap-1">
-                {["#FACC14","#A855F7","#22C55E","#FB923C"].map(c => (
-                  <div key={c} className="w-2 h-2 rounded-full border border-black" style={{ background: c }} />
-                ))}
-              </div>
-              <p className="text-white/20 font-bold text-[0.48rem] tracking-widest">© 2025</p>
-            </motion.div>
-
-          </div>
-        </div>
-
-        {/* ── Below-poster hint ── */}
-        <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none">
-          <p className="text-white/20 text-xs font-semibold tracking-widest uppercase">
-            Screenshot this poster to share
+          className="px-6 pt-3 pb-2 text-center"
+          style={{ background: "#111" }}>
+          <p
+            className="font-black text-white leading-tight"
+            style={{ fontSize: "1.15rem" }}>
+            How much do you <span style={{ color: "#FACC14" }}>love</span> your child?
+          </p>
+          <p className="text-white/60 font-semibold text-[0.62rem] tracking-wide mt-0.5">
+            Show the world how beautiful they are.
           </p>
         </div>
+
+        {/* ── TOP BAR: logo + decorative ── */}
+        <div className="flex items-center justify-between px-5 pt-2 pb-1">
+          <Image src="/logo.svg" alt="Logo" width={76} height={20} />
+          <div className="flex items-center gap-1 opacity-60">
+            <XMark color="#FACC14" size={14} />
+          </div>
+        </div>
+
+        {/* ── BODY: two-column ── */}
+        <div className="grid grid-cols-[46%_54%] gap-0 px-4 pb-2 items-start">
+          {/* LEFT — circular photo + age badge */}
+          <div className="relative flex flex-col items-center gap-2 pt-1">
+            <div
+              className="relative overflow-hidden border-4 border-black"
+              style={{
+                width: 190,
+                height: 215,
+                borderRadius: "50% 50% 50% 50% / 55% 55% 45% 45%",
+                boxShadow: "5px 5px 0px #111",
+              }}>
+              <Image src={childrenImg} alt="Kids" fill className="object-cover object-top" sizes="190px" />
+            </div>
+
+            {/* AGE badge */}
+            <div
+              className="flex flex-col items-center justify-center border-4 border-black bg-white font-black leading-tight"
+              style={{ width: 96, height: 58, borderRadius: "50%", boxShadow: "3px 3px 0px #111" }}>
+              <span className="text-[0.52rem] tracking-widest text-gray-500 uppercase font-bold">AGE:</span>
+              <span className="text-[1.3rem] text-black leading-none">0–10</span>
+            </div>
+
+            <div className="absolute -bottom-1 -left-1 opacity-80">
+              <Stars color="#22C55E" />
+            </div>
+          </div>
+
+          {/* RIGHT — text content */}
+          <div className="pt-1 pl-3 flex flex-col gap-1.5">
+            <div className="flex justify-end mb-0.5">
+              <XMark color="#A855F7" size={12} />
+            </div>
+
+            <p className="font-bold text-gray-700 text-[0.75rem] leading-snug">
+              Your child was born for this.
+            </p>
+
+            {/* Prize amount */}
+            <div>
+              <p className="font-black leading-none text-black" style={{ fontSize: "2.6rem", textShadow: "3px 3px 0px rgba(0,0,0,0.12)" }}>
+                ₦1,000,000
+              </p>
+              <p className="font-semibold text-gray-600 text-[0.68rem] leading-tight mt-0.5">
+                + 3 years full Scholarship
+              </p>
+              <div className="h-px bg-gray-200 my-1.5" />
+              <p className="font-bold text-gray-700 text-[0.75rem]">and be crowned</p>
+            </div>
+
+            {/* Contest name */}
+            <div className="leading-[0.85]">
+              <p className="font-black uppercase text-[#FACC14]"
+                style={{ fontSize: "1.85rem", WebkitTextStroke: "2px #111", paintOrder: "stroke fill", textShadow: "3px 3px 0px #111" }}>
+                THE FUTURE
+              </p>
+              <p className="font-black uppercase text-[#FACC14]"
+                style={{ fontSize: "2.1rem", WebkitTextStroke: "2px #111", paintOrder: "stroke fill", textShadow: "3px 3px 0px #111" }}>
+                STAR
+              </p>
+              <div className="flex items-center gap-1.5 mt-1">
+                <div className="h-px flex-1 bg-black/20" />
+                <p className="font-bold uppercase text-black/40 tracking-[0.2em] text-[0.5rem]">Challenge</p>
+                <div className="h-px flex-1 bg-black/20" />
+              </div>
+            </div>
+
+            {/* Prize breakdown card */}
+            <div className="rounded-xl px-3 pt-2 pb-2.5 border-2 border-black"
+              style={{ background: "#FACC14", boxShadow: "3px 3px 0px #111" }}>
+              <p className="font-bold text-black/50 text-[0.5rem] tracking-wide mb-0.5">Winner</p>
+              <div className="flex items-baseline gap-1.5 mb-2">
+                <p className="font-black text-black leading-none text-[1.25rem]">₦500,000</p>
+                <p className="font-black text-black/80 leading-none text-[0.7rem]">+ Scholarship</p>
+              </div>
+              <div className="grid grid-cols-2 gap-x-2 border-t border-black/20 pt-1.5">
+                <div>
+                  <p className="font-bold text-black/50 text-[0.48rem] tracking-wide mb-0.5">1st Runner up</p>
+                  <p className="font-black text-black leading-none text-[1.05rem]">₦300,000</p>
+                </div>
+                <div>
+                  <p className="font-bold text-black/50 text-[0.48rem] tracking-wide mb-0.5">2nd Runner up</p>
+                  <p className="font-black text-black leading-none text-[1.05rem]">₦200,000</p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-gray-400 font-semibold text-[0.52rem]">**Registration closes soon</p>
+          </div>
+        </div>
+
+        {/* ── REGISTER SECTION ── */}
+        <div className="mx-4 mb-3">
+          <div
+            className="rounded-xl border-2 border-black px-4 py-2 flex items-center justify-between"
+            style={{ background: "#111", boxShadow: "3px 3px 0px #FACC14" }}>
+            <div>
+              <p className="text-[#FACC14] font-black text-[0.52rem] tracking-[0.2em] uppercase">
+                Secure Your Child&apos;s Spot At
+              </p>
+              <p className="text-white font-black text-[0.95rem] leading-tight">leadritehub.com</p>
+            </div>
+            <div className="rounded-full border-2 border-[#FACC14] px-3 py-1.5 font-black text-[#FACC14] text-[0.58rem] tracking-wide uppercase">
+              FREE →
+            </div>
+          </div>
+        </div>
+
+        {/* ── FOOTER ── */}
+        <div
+          className="flex items-center justify-between px-4 py-2 border-t-2 border-black"
+          style={{ background: "#FACC14" }}>
+          <p className="font-black text-black text-[0.55rem] tracking-widest uppercase">
+            The Future Star Challenge
+          </p>
+          <div className="flex gap-1.5">
+            {["#111", "#A855F7", "#22C55E", "#FB923C"].map((c) => (
+              <div
+                key={c}
+                className="w-2.5 h-2.5 rounded-full border-2 border-black"
+                style={{ background: c }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Corner decoratives */}
+        <div className="absolute top-12 right-3 opacity-50">
+          <Stars color="#FB923C" />
+        </div>
+        <div className="absolute bottom-14 right-4 opacity-40">
+          <XMark color="#A855F7" size={14} />
+        </div>
       </div>
-    </>
+
+      <p className="fixed bottom-4 left-0 right-0 text-center text-gray-400 text-xs font-semibold tracking-widest uppercase pointer-events-none">
+        Screenshot this poster to share on social media
+      </p>
+    </div>
   );
 }

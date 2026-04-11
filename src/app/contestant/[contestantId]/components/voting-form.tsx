@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Field, FieldError, FieldLabel } from "@ui/field";
 import { Button } from "@ui/button";
 import {
@@ -29,6 +29,8 @@ import { VOTE_BUNDLES } from "@/lib/vote-bundles";
 type Props = {
   updateSuccessDialogData: (numberOfVotes: string) => void;
   isVotingOpen: boolean;
+  triggerOpen?: boolean;
+  onTriggerConsumed?: () => void;
   contestant: {
     contestantId: string;
     name: string;
@@ -48,6 +50,8 @@ export default function VotingForm({
   contestant,
   updateSuccessDialogData,
   isVotingOpen,
+  triggerOpen,
+  onTriggerConsumed,
 }: Props) {
   const { contestantId, name } = contestant;
 
@@ -72,9 +76,18 @@ export default function VotingForm({
     },
   };
 
-  const [activeDialog, setActiveDialog] = useState<"none" | "first" | "second">("none");
+  const [activeDialog, setActiveDialog] = useState<"none" | "first" | "second">(
+    "none",
+  );
 
   const closeAllDialog = () => setActiveDialog("none");
+
+  useEffect(() => {
+    if (triggerOpen) {
+      setActiveDialog("first");
+      onTriggerConsumed?.();
+    }
+  }, [triggerOpen]);
 
   const onSubmit: SubmitHandler<IFormInput> = async () => {};
 
@@ -83,34 +96,34 @@ export default function VotingForm({
       {/* FIRST DIALOG – VOTE FORM */}
       <Dialog
         open={activeDialog === "first"}
-        onOpenChange={(open) => setActiveDialog(open ? "first" : "none")}
-      >
+        onOpenChange={(open) => setActiveDialog(open ? "first" : "none")}>
         <DialogTrigger asChild>
           <Button
             size="lg"
-            className="h-12 px-8 font-bold rounded-xl bg-[#FACC14] text-black border-2 border-black shadow-[4px_4px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition grow"
-            onClick={() => setActiveDialog("first")}
-          >
+            className="h-12 px-8 font-bold rounded-xl bg-[#FACC14] text-black border-2 border-black shadow-[4px_4px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition grow focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
+            onClick={() => setActiveDialog("first")}>
             VOTE NOW
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-[425px] border-2 border-black shadow-[6px_6px_0px_#111]">
+        <DialogContent className="sm:max-w-106.25 border-2 border-black shadow-[6px_6px_0px_#111]">
           <DialogHeader className="space-y-2">
             <DialogTitle className="font-bold text-black text-xl">
               Vote for <span className="text-[#A855F7]">{name}</span>
             </DialogTitle>
-            <DialogDescription>
+            {/* <DialogDescription>
               Help <span className="font-bold">{contestant.name}</span> get{" "}
               <span className="font-bold">more votes</span> to win the contest.
-            </DialogDescription>
+            </DialogDescription> */}
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-5">
               {/* VOTER NAME */}
               <Field className="grid gap-2">
-                <FieldLabel htmlFor="voterName" className="font-bold text-black">
+                <FieldLabel
+                  htmlFor="voterName"
+                  className="font-bold text-black">
                   What&apos;s your name
                 </FieldLabel>
                 <Input
@@ -128,7 +141,9 @@ export default function VotingForm({
               <Field className="grid gap-2">
                 <FieldLabel className="font-bold text-black">
                   Choose a vote pack{" "}
-                  <span className="text-gray-500 font-semibold">(₦50/vote)</span>
+                  <span className="text-gray-500 font-semibold">
+                    (₦50/vote)
+                  </span>
                 </FieldLabel>
 
                 {!isVotingOpen ? (
@@ -148,20 +163,25 @@ export default function VotingForm({
                             <button
                               key={bundle.votes}
                               type="button"
-                              onClick={() => field.onChange(String(bundle.votes))}
+                              onClick={() =>
+                                field.onChange(String(bundle.votes))
+                              }
                               className={`relative rounded-xl border-2 p-3 text-left transition-all ${
                                 selected
                                   ? "border-black bg-[#FACC14] shadow-[3px_3px_0px_#111]"
                                   : "border-black/20 hover:border-black bg-white"
-                              } ${bundle.highlight ? "ring-2 ring-[#A855F7] ring-offset-1" : ""}`}
-                            >
+                              } ${bundle.highlight ? "ring-2 ring-[#A855F7] ring-offset-1" : ""}`}>
                               {bundle.highlight && (
                                 <span className="absolute -top-2 right-2 text-[10px] font-bold bg-[#A855F7] text-white px-2 py-0.5 rounded-full border border-[#A855F7]">
                                   Popular
                                 </span>
                               )}
-                              <p className="font-bold text-sm text-black">{bundle.label}</p>
-                              <p className="text-lg font-black text-black">{bundle.votes} votes</p>
+                              <p className="font-bold text-sm text-black">
+                                {bundle.label}
+                              </p>
+                              <p className="text-lg font-black text-black">
+                                {bundle.votes} votes
+                              </p>
                               <p className="text-xs text-gray-500 font-semibold">
                                 ₦{bundle.price.toLocaleString()}
                               </p>
@@ -177,7 +197,9 @@ export default function VotingForm({
 
               {/* VOTING METHOD */}
               <Field>
-                <FieldLabel htmlFor="votingMethod" className="font-bold text-black">
+                <FieldLabel
+                  htmlFor="votingMethod"
+                  className="font-bold text-black">
                   Select voting method
                 </FieldLabel>
                 <Controller
@@ -191,6 +213,7 @@ export default function VotingForm({
                       </SelectTrigger>
                       <SelectContent className="border-2 border-black">
                         <SelectItem value="paystack">Paystack</SelectItem>
+                        <SelectItem value="bankTransfer">Bank Transfer</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -212,11 +235,14 @@ export default function VotingForm({
                         className="border-2 border-black"
                       />
                       <div className="grid gap-1">
-                        <FieldLabel htmlFor="keepAnonymous" className="font-bold text-black">
+                        <FieldLabel
+                          htmlFor="keepAnonymous"
+                          className="font-bold text-black">
                           Keep my vote anonymous
                         </FieldLabel>
                         <p className="text-gray-500 text-xs font-semibold">
-                          This will hide your name on the contestant&apos;s vote records
+                          This will hide your name on the contestant&apos;s vote
+                          records
                         </p>
                       </div>
                     </div>
@@ -227,11 +253,14 @@ export default function VotingForm({
               {/* TRUST SIGNAL */}
               {isPaystackSelected && (
                 <div className="flex items-center gap-2 rounded-xl bg-[#22C55E]/10 border-2 border-[#22C55E] px-3 py-2 text-xs font-semibold text-green-800">
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-green-600 fill-current">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4 shrink-0 text-green-600 fill-current">
                     <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z" />
                   </svg>
                   <span>
-                    Secured by <strong>Paystack</strong> — votes credited instantly after payment
+                    Secured by <strong>Paystack</strong> — votes credited
+                    instantly after payment
                   </span>
                 </div>
               )}
@@ -239,7 +268,9 @@ export default function VotingForm({
               {/* FOOTER BUTTONS */}
               <div className="flex gap-3 justify-end">
                 <DialogClose asChild>
-                  <Button variant="outline" className="border-2 border-black rounded-xl font-bold">
+                  <Button
+                    variant="outline"
+                    className="border-2 border-black rounded-xl font-bold">
                     Cancel
                   </Button>
                 </DialogClose>
@@ -255,8 +286,7 @@ export default function VotingForm({
                   <Button
                     type="button"
                     className="bg-black text-[#FACC14] font-bold rounded-xl border-2 border-black"
-                    onClick={handleSubmit(() => setActiveDialog("second"))}
-                  >
+                    onClick={handleSubmit(() => setActiveDialog("second"))}>
                     Continue
                   </Button>
                 )}
@@ -269,8 +299,7 @@ export default function VotingForm({
       {/* SECOND DIALOG – BANK TRANSFER */}
       <Dialog
         open={activeDialog === "second"}
-        onOpenChange={(open) => setActiveDialog(open ? "second" : "none")}
-      >
+        onOpenChange={(open) => setActiveDialog(open ? "second" : "none")}>
         <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col border-2 border-black shadow-[6px_6px_0px_#111]">
           <DialogHeader>
             <DialogTitle className="font-bold text-black">
@@ -286,7 +315,9 @@ export default function VotingForm({
 
           <div className="flex justify-end mt-6">
             <DialogClose asChild>
-              <Button variant="outline" className="border-2 border-black rounded-xl font-bold">
+              <Button
+                variant="outline"
+                className="border-2 border-black rounded-xl font-bold">
                 Okay
               </Button>
             </DialogClose>

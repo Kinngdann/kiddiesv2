@@ -1,7 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@ui/button";
-import { Mail, MapPinHouse, Phone, Instagram, Facebook, Youtube } from "lucide-react";
+import {
+  Mail,
+  MapPinHouse,
+  Phone,
+  Instagram,
+  Facebook,
+  Youtube,
+} from "lucide-react";
 import BackToTop from "./back-to-top";
 
 const quickLinks = [
@@ -29,8 +36,12 @@ export default function Footer() {
             <span>✨</span>
             <span>Join the Fun</span>
           </div>
-          <h2 className="text-black text-[clamp(1.6rem,4vw,2.4rem)] leading-tight">Ready to Enroll?</h2>
-          <p className="text-black/70 font-semibold">Take the opportunity now!</p>
+          <h2 className="text-black text-[clamp(1.6rem,4vw,2.4rem)] leading-tight">
+            Ready to Enroll?
+          </h2>
+          <p className="text-black/70 font-semibold">
+            Take the opportunity now!
+          </p>
         </div>
         <Button
           asChild
@@ -48,7 +59,7 @@ export default function Footer() {
         <div className="space-y-4">
           <Image
             src="/logo.svg"
-            alt="Kiddies Crown Contest logo"
+            alt="The Future Star Contest logo"
             width={100}
             height={30}
             className="invert opacity-70"
@@ -99,11 +110,11 @@ export default function Footer() {
           </div>
           <div className="flex gap-3 items-center">
             <Phone size={16} className="shrink-0" />
-            <p className="text-sm">+234 802 441 8127</p>
+            <p className="text-sm">+234 704 244 2000</p>
           </div>
           <div className="flex gap-3 items-center">
             <Mail size={16} className="shrink-0" />
-            <p className="text-sm">kiddiescrown123@gmail.com</p>
+            <p className="text-sm">leadritehub@gmail.com</p>
           </div>
         </div>
       </div>
@@ -111,7 +122,8 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="footer border-t border-white/10 px-6 py-4 lg:px-20 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-sm text-[#ababab]">
-          © {new Date().getFullYear()} Kiddies Crown Contest. All rights reserved.
+          © {new Date().getFullYear()} The Future Star Contest. All rights
+          reserved.
         </p>
         <BackToTop />
       </div>

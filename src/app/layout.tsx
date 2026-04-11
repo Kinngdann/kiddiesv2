@@ -18,8 +18,8 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Kiddies Crown",
-  description: "Official website of the Kiddies Crown Contest",
+  title: "The Future Star Contest",
+  description: "Official website of The Future Star Contest",
 };
 
 export default function RootLayout({

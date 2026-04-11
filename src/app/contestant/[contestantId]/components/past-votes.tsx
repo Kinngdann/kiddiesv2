@@ -45,7 +45,7 @@ export default function PastVotes({ voteLog }: voteProps) {
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent>
+      <DrawerContent className="bg-white">
         <DrawerHeader>
           <DrawerTitle>Voting Activities</DrawerTitle>
           <DrawerDescription>Most recent votes</DrawerDescription>

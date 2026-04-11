@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     for (const d of displaced) {
       sendWhatsApp(
         d.whatsapp,
-        `Hi ${d.parent}, just a heads-up — ${d.firstName} has just been overtaken by ${voterName_} in the Kiddies Crown Contest. Rally more votes to help ${d.firstName} climb back up! Vote at ${process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net"}`
+        `Hi ${d.parent}, just a heads-up — ${d.firstName} has just been overtaken by ${voterName_} in The Future Star Contest. Rally more votes to help ${d.firstName} climb back up! Vote at ${process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net"}`
       ).catch(() => {}); // non-blocking
     }
 

@@ -10,13 +10,13 @@ const nextConfig: NextConfig = {
 
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
-      }, {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3009",
+      },
+      {
         protocol: "https",
-        hostname: "kidscrown.net",
-        // pathname: "/account123/**",
+        hostname: "leadritehub.com",
       },
     ]
   }

@@ -1,24 +1,35 @@
-import { nthPosition } from "@/utils/format-position";
-import Image from "next/image";
-import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import Leaderboard from "./leaderboard";
 
-type Contestant = {
-  contestantId: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  age: string;
-  currentVotes: number;
-  picture: string | null;
-};
-
 export default async function EliteBoard() {
-  const res = await fetch(
-    "https://kidscrown.net/api/contestant?rank=top",
-    { cache: "no-store" }
-  );
-  const topContestants: Contestant[] = await res.json();
+  const config = await getContestConfig();
+  const field = stageVoteField(config.currentStage);
+
+  const raw = await prisma.contestant.findMany({
+    where: { disabled: false },
+    select: {
+      contestantId: true,
+      firstName: true,
+      lastName: true,
+      gender: true,
+      stage1vote: true,
+      stage2vote: true,
+      stage3vote: true,
+      picture: true,
+    },
+    orderBy: { [field]: "desc" },
+    take: 5,
+  });
+
+  const topContestants = raw.map((c) => ({
+    contestantId: c.contestantId,
+    firstName: c.firstName,
+    lastName: c.lastName,
+    gender: c.gender,
+    picture: c.picture,
+    currentVotes: c[field],
+  }));
 
   return (
     <section className="fb-col-wrapper pt-28 pb-16">

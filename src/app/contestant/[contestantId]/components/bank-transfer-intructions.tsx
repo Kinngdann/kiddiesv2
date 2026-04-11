@@ -23,13 +23,13 @@ export default function BankTransferInstructions({
           for <span className="font-bold">{`${numberOfVotes} votes`}</span>
           <ul className="list-disc list-inside mt-4">
             <li>
-              Account Name: <span className="font-bold">Kiddies Crown</span>
+              Account Name: <span className="font-bold">Leadrite Kiddies Hub</span>
             </li>
             <li>
-              Account Number: <span className="font-bold">0669795144</span>
+              Account Number: <span className="font-bold">1221812034</span>
             </li>
             <li>
-              Bank: <span className="font-bold">GTBank</span>
+              Bank: <span className="font-bold">Zenith Bank</span>
             </li>
           </ul>
         </li>

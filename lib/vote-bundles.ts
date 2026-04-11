@@ -7,7 +7,7 @@ export type VoteBundle = {
 
 export const VOTE_BUNDLES: VoteBundle[] = [
   { label: "Starter", votes: 10, price: 500 },
-  { label: "Fan Pack", votes: 50, price: 2500, highlight: true },
+  { label: "Fan Pack", votes: 50, price: 2500 },
+  { label: "Popular", votes: 100, price: 5000, highlight: true },
   { label: "Champion", votes: 200, price: 10000 },
-  { label: "Legend", votes: 1000, price: 50000 },
 ];

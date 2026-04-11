@@ -23,7 +23,7 @@ export default function Navbar() {
         <Image
           className="w-20 md:w-24"
           src="/logo.svg"
-          alt="Kiddies Crown Contest logo"
+          alt="The Future Star Contest logo"
           width={96}
           height={20}
           priority

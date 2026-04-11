@@ -1,16 +1,10 @@
+import { prisma } from "@/lib/prisma";
+import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import { capitalize } from "@/utils/capitalize";
 import Image from "next/image";
 import Link from "next/link";
-
-type Contestant = {
-  contestantId: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  age: string;
-  stage2vote: number;
-  picture: string;
-};
+const malePic = "/avatar-male.jpg";
+const femalePic = "/avatar-female.jpg";
 
 const ACCENT_COLORS = [
   "bg-[#FACC14]",
@@ -19,13 +13,40 @@ const ACCENT_COLORS = [
   "bg-[#FB923C]",
 ];
 
-export default async function Contestants() {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const response = await fetch(`${baseUrl}/api/contestant`, {
-    cache: "no-store",
-  });
+const PAGE_SIZE = 12;
 
-  const contestants: Contestant[] = await response.json();
+export default async function Contestants({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, parseInt(page ?? "1", 10));
+
+  const config = await getContestConfig();
+  const field = stageVoteField(config.currentStage);
+
+  const [contestants, total] = await Promise.all([
+    prisma.contestant.findMany({
+      where: { disabled: false },
+      select: {
+        contestantId: true,
+        firstName: true,
+        lastName: true,
+        gender: true,
+        age: true,
+        stage1vote: true,
+        stage2vote: true,
+        stage3vote: true,
+        picture: true,
+      },
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.contestant.count({ where: { disabled: false } }),
+  ]);
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <section className="fb-col-wrapper pt-28 pb-16">
@@ -40,6 +61,9 @@ export default async function Contestants() {
         <p className="text-gray-600 font-semibold">
           Vote for your favourite star — ₦50 per vote
         </p>
+        <p className="text-gray-400 text-xs font-semibold">
+          Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, total)} of {total} contestants
+        </p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -52,11 +76,9 @@ export default async function Contestants() {
             <div className="h-72 overflow-hidden relative">
               <Image
                 alt={`${contestant.firstName} ${contestant.lastName}`}
-                src={`https://kidscrown.net/${contestant.picture}`}
-                width={360}
-                height={460}
-                priority
-                className="w-full h-full object-cover"
+                src={contestant.picture ? `/${contestant.picture}` : contestant.gender?.toLowerCase() === "male" ? malePic : femalePic}
+                fill
+                className="object-cover object-top"
               />
               {/* Contestant ID badge */}
               <span className="absolute top-3 left-3 bg-black text-white font-bold text-[0.6rem] px-2 py-0.5 rounded-full">
@@ -67,7 +89,7 @@ export default async function Contestants() {
             {/* Info */}
             <div className="p-5 space-y-3">
               <h3 className="font-bold text-black text-xl leading-snug">
-                {contestant.firstName} {contestant.lastName}
+                {[contestant.firstName, contestant.lastName].filter(Boolean).map(capitalize).join(" ")}
               </h3>
 
               <div className="flex gap-2 flex-wrap">
@@ -78,7 +100,7 @@ export default async function Contestants() {
                   Age {contestant.age}
                 </span>
                 <span className="bg-white text-black text-xs font-bold px-3 py-1 rounded-full border-2 border-black">
-                  🗳️ {contestant.stage2vote} votes
+                  🗳️ {contestant[field]} votes
                 </span>
               </div>
 
@@ -92,6 +114,51 @@ export default async function Contestants() {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-10">
+          <Link
+            href={`/all-contestants?page=${currentPage - 1}`}
+            aria-disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-xl border-2 border-black font-bold text-sm transition ${
+              currentPage === 1
+                ? "opacity-30 pointer-events-none bg-white"
+                : "bg-white hover:bg-[#FACC14] shadow-[3px_3px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5"
+            }`}
+          >
+            ← Prev
+          </Link>
+
+          <div className="flex gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <Link
+                key={p}
+                href={`/all-contestants?page=${p}`}
+                className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
+                  p === currentPage
+                    ? "bg-[#FACC14] shadow-[3px_3px_0px_#111]"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                {p}
+              </Link>
+            ))}
+          </div>
+
+          <Link
+            href={`/all-contestants?page=${currentPage + 1}`}
+            aria-disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-xl border-2 border-black font-bold text-sm transition ${
+              currentPage === totalPages
+                ? "opacity-30 pointer-events-none bg-white"
+                : "bg-white hover:bg-[#FACC14] shadow-[3px_3px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5"
+            }`}
+          >
+            Next →
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

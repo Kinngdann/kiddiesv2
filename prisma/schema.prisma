@@ -20,8 +20,8 @@ model Contestant {
   picture      String?
   videoUrl     String?
   parent       String
-  phone        String    @unique
-  whatsapp     String    @unique
+  phone        String
+  whatsapp     String
   disabled     Boolean   @default(false)
   stage1vote   Int       @default(1)
   stage2vote   Int       @default(0)

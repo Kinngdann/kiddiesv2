@@ -52,7 +52,7 @@ export function ShareLink({ contestantName }: ShareLinkProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md border-2 border-black shadow-[6px_6px_0px_#111]">
+      <DialogContent className="sm:max-w-md border-2 border-black shadow-[6px_6px_0px_#111] bg-white">
         <DialogHeader>
           <DialogTitle className="font-bold text-black text-xl">
             Share this contestant

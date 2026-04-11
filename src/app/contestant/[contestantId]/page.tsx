@@ -3,6 +3,7 @@ import HowToVote from "./components/how-to-vote";
 import NoUserFound from "./components/not-found";
 import Profile from "./components/profile";
 import { ShareLink } from "./components/share";
+import { capitalize } from "@/utils/capitalize";
 import type { Metadata } from "next";
 
 interface ContestantPageParams {
@@ -24,13 +25,13 @@ export async function generateMetadata({ params }: ContestantPageParams): Promis
   const user = await fetchContestant(contestantId);
 
   if (!user) {
-    return { title: "Contestant Not Found | Kiddies Crown" };
+    return { title: "Contestant Not Found | The Future Star Contest" };
   }
 
-  const name = `${user.firstName} ${user.lastName ?? ""}`.trim();
+  const name = [user.firstName, user.lastName].filter(Boolean).map(capitalize).join(" ");
   const votes = user.currentVotes ?? user.stage2vote ?? 0;
   const pronoun = user.gender === "male" ? "him" : "her";
-  const title = `Vote for ${name} — Contestant #${user.contestantId} | Kiddies Crown`;
+  const title = `Vote for ${name} — Contestant #${user.contestantId} | The Future Star Contest`;
   const description = `${name} has ${votes} votes. Help ${pronoun} reach the top! Vote now for ₦50 per vote.`;
   const imageUrl = user.picture
     ? `${APP_URL}/${user.picture}`
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: ContestantPageParams): Promis
       title,
       description,
       url: pageUrl,
-      siteName: "Kiddies Crown",
+      siteName: "The Future Star Contest",
       images: [{ url: imageUrl, width: 360, height: 460, alt: name }],
       type: "website",
     },
@@ -71,7 +72,7 @@ export default async function Contestant({ params }: ContestantPageParams) {
   const user = await response.json();
   const contestant = {
     ...user,
-    name: `${user.firstName} ${user.lastName ?? ""}`,
+    name: [user.firstName, user.lastName].filter(Boolean).map(capitalize).join(" "),
   };
 
   const countdownTarget = user.endDate
