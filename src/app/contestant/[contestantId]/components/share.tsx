@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@ui/button";
 import {
   Dialog,
@@ -15,15 +15,18 @@ import {
 import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Share2, Copy, Check } from "lucide-react";
-import Link from "next/link";
 
 type ShareLinkProps = {
   contestantName?: string;
 };
 
 export function ShareLink({ contestantName }: ShareLinkProps) {
-  const url = typeof window !== "undefined" ? window.location.href : "";
+  const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setUrl(window.location.href);
+  }, []);
 
   const whatsappText = contestantName
     ? `Help ${contestantName} win the Future Star Challenge! Every vote is only ₦50. Vote here: ${url}`
@@ -40,16 +43,10 @@ export function ShareLink({ contestantName }: ShareLinkProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="link"
-          asChild
-          className="text-gray-500 font-bold mt-8 hover:text-[#A855F7] transition"
-          size="sm"
-        >
-          <Link href="#">
-            Share link <Share2 className="ml-1 w-4 h-4" />
-          </Link>
-        </Button>
+        <button className="w-full max-w-2xl mx-auto flex items-center justify-center gap-2 mt-8 bg-white text-black font-bold text-sm px-6 py-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition">
+          <Share2 className="w-4 h-4" />
+          Share {contestantName ? `${contestantName}'s` : "this"} profile
+        </button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md border-2 border-black shadow-[6px_6px_0px_#111] bg-white">

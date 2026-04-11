@@ -117,45 +117,59 @@ export default async function Contestants({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-10">
+        <div className="flex items-center justify-center gap-1 mt-10">
           <Link
             href={`/all-contestants?page=${currentPage - 1}`}
             aria-disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-xl border-2 border-black font-bold text-sm transition ${
+            className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
               currentPage === 1
                 ? "opacity-30 pointer-events-none bg-white"
                 : "bg-white hover:bg-[#FACC14] shadow-[3px_3px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5"
             }`}
           >
-            ← Prev
+            ←
           </Link>
 
-          <div className="flex gap-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <Link
-                key={p}
-                href={`/all-contestants?page=${p}`}
-                className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
-                  p === currentPage
-                    ? "bg-[#FACC14] shadow-[3px_3px_0px_#111]"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-              >
-                {p}
-              </Link>
-            ))}
-          </div>
+          {(() => {
+            const pages: (number | "…")[] = [];
+            for (let p = 1; p <= totalPages; p++) {
+              if (p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)) {
+                pages.push(p);
+              } else if (pages[pages.length - 1] !== "…") {
+                pages.push("…");
+              }
+            }
+            return pages.map((p, i) =>
+              p === "…" ? (
+                <span key={`ellipsis-${i}`} className="w-7 flex items-center justify-center font-bold text-sm text-gray-400">
+                  …
+                </span>
+              ) : (
+                <Link
+                  key={p}
+                  href={`/all-contestants?page=${p}`}
+                  className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
+                    p === currentPage
+                      ? "bg-[#FACC14] shadow-[3px_3px_0px_#111]"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  {p}
+                </Link>
+              )
+            );
+          })()}
 
           <Link
             href={`/all-contestants?page=${currentPage + 1}`}
             aria-disabled={currentPage === totalPages}
-            className={`px-4 py-2 rounded-xl border-2 border-black font-bold text-sm transition ${
+            className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
               currentPage === totalPages
                 ? "opacity-30 pointer-events-none bg-white"
                 : "bg-white hover:bg-[#FACC14] shadow-[3px_3px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5"
             }`}
           >
-            Next →
+            →
           </Link>
         </div>
       )}

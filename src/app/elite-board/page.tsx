@@ -48,7 +48,11 @@ export default async function EliteBoard() {
         </p>
       </div>
 
-      <Leaderboard initial={topContestants} />
+      <div className="mt-12 mx-auto max-w-xl text-center border-4 border-black rounded-2xl bg-[#FACC14] px-8 py-10 shadow-[6px_6px_0px_0px_#000]">
+        <p className="text-2xl font-black text-black leading-snug">
+          👀 You'll be able to see top performing contestants here at the final.
+        </p>
+      </div>
     </section>
   );
 }
