@@ -23,7 +23,8 @@ export default function BankTransferInstructions({
           for <span className="font-bold">{`${numberOfVotes} votes`}</span>
           <ul className="list-disc list-inside mt-4">
             <li>
-              Account Name: <span className="font-bold">Leadrite Kiddies Hub</span>
+              Account Name:{" "}
+              <span className="font-bold">Leadrite Kiddies Hub</span>
             </li>
             <li>
               Account Number: <span className="font-bold">1221812034</span>
@@ -61,7 +62,7 @@ export default function BankTransferInstructions({
       </ol>
 
       <div className="fixed bottom-8">
-        <Link href="https://wa.me/message/ZZPKEGOSI2TON1">
+        <Link href="https://wa.me/message/WJLRTPUOH6KSL1">
           <Image src={whatsappIcon} alt="whatsapp icon" width={40} />
         </Link>
       </div>

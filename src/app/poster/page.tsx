@@ -150,7 +150,7 @@ export default function CampaignPoster() {
               <p className="font-bold text-black/50 text-[0.5rem] tracking-wide mb-0.5">Winner</p>
               <div className="flex items-baseline gap-1.5 mb-2">
                 <p className="font-black text-black leading-none text-[1.25rem]">₦500,000</p>
-                <p className="font-black text-black/80 leading-none text-[0.7rem]">+ Scholarship</p>
+                <p className="font-black text-black/80 leading-none text-[0.7rem]">+ 3yr Scholarship</p>
               </div>
               <div className="grid grid-cols-2 gap-x-2 border-t border-black/20 pt-1.5">
                 <div>
