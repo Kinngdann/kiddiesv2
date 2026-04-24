@@ -5,6 +5,7 @@ import Profile from "./components/profile";
 import { ShareLink } from "./components/share";
 import { capitalize } from "@/utils/capitalize";
 import type { Metadata } from "next";
+import StageTwoComingSoon from "./components/stage-two-coming";
 
 interface ContestantPageParams {
   params: Promise<{ contestantId: string }>;
@@ -20,7 +21,9 @@ async function fetchContestant(contestantId: string) {
   return res.json();
 }
 
-export async function generateMetadata({ params }: ContestantPageParams): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ContestantPageParams): Promise<Metadata> {
   const { contestantId } = await params;
   const user = await fetchContestant(contestantId);
 
@@ -28,7 +31,10 @@ export async function generateMetadata({ params }: ContestantPageParams): Promis
     return { title: "Contestant Not Found | The Future Star Contest" };
   }
 
-  const name = [user.firstName, user.lastName].filter(Boolean).map(capitalize).join(" ");
+  const name = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .map(capitalize)
+    .join(" ");
   const votes = user.currentVotes ?? user.stage2vote ?? 0;
   const pronoun = user.gender === "male" ? "him" : "her";
   const title = `Vote for ${name} — Contestant #${user.contestantId} | The Future Star Contest`;
@@ -72,7 +78,10 @@ export default async function Contestant({ params }: ContestantPageParams) {
   const user = await response.json();
   const contestant = {
     ...user,
-    name: [user.firstName, user.lastName].filter(Boolean).map(capitalize).join(" "),
+    name: [user.firstName, user.lastName]
+      .filter(Boolean)
+      .map(capitalize)
+      .join(" "),
   };
 
   const countdownTarget = user.endDate
@@ -84,12 +93,21 @@ export default async function Contestant({ params }: ContestantPageParams) {
 
   return (
     <section className="fb-col-wrapper pt-20 md:pt-32">
+      <StageTwoComingSoon
+        contestant={{
+          name: contestant.name,
+          picture: user.picture,
+          gender: user.gender,
+          stage1vote: user.stage1vote,
+        }}
+      />
+      {/* {user.currentStage === 2 && !user.votingOpen && <StageTwoComingSoon />}
       {countdownTarget && (
         <Countdown target={countdownTarget} header={countdownHeader} />
       )}
       <Profile contestant={contestant} isVotingOpen={user.votingOpen ?? false} />
       <ShareLink contestantName={contestant.name} />
-      <HowToVote />
+      <HowToVote /> */}
     </section>
   );
 }
