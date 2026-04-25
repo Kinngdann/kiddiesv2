@@ -93,21 +93,24 @@ export default async function Contestant({ params }: ContestantPageParams) {
 
   return (
     <section className="fb-col-wrapper pt-20 md:pt-32">
-      <StageTwoComingSoon
+      {/* <StageTwoComingSoon
         contestant={{
           name: contestant.name,
           picture: user.picture,
           gender: user.gender,
           stage1vote: user.stage1vote,
         }}
-      />
-      {/* {user.currentStage === 2 && !user.votingOpen && <StageTwoComingSoon />}
+      /> */}
+      {user.currentStage === 2 && !user.votingOpen && <StageTwoComingSoon />}
       {countdownTarget && (
         <Countdown target={countdownTarget} header={countdownHeader} />
       )}
-      <Profile contestant={contestant} isVotingOpen={user.votingOpen ?? false} />
+      <Profile
+        contestant={contestant}
+        isVotingOpen={user.votingOpen ?? false}
+      />
       <ShareLink contestantName={contestant.name} />
-      <HowToVote /> */}
+      <HowToVote />
     </section>
   );
 }

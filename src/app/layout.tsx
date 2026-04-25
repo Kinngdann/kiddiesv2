@@ -29,8 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body
-        className={`${nunito.variable} ${fredoka.variable} antialiased`}>
+      <body className={`${nunito.variable} ${fredoka.variable} antialiased`}>
         <Navigation />
         {children}
         <Toaster />
