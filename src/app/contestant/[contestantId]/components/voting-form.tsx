@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -213,7 +212,9 @@ export default function VotingForm({
                       </SelectTrigger>
                       <SelectContent className="border-2 border-black">
                         <SelectItem value="paystack">Paystack</SelectItem>
-                        <SelectItem value="bankTransfer">Bank Transfer</SelectItem>
+                        <SelectItem value="bankTransfer">
+                          Bank Transfer
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}

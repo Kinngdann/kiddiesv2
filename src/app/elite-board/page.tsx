@@ -36,7 +36,7 @@ export default async function EliteBoard() {
       {/* Header */}
       <div className="text-center space-y-3">
         <span className="inline-flex items-center gap-2 bg-[#FACC14] text-black font-bold text-xs px-4 py-1.5 rounded-full border-2 border-black tracking-wider uppercase">
-          ✨ Live Rankings
+          Live Rankings
         </span>
         <h2 className="font-bold text-black text-[clamp(1.8rem,4vw,3rem)] flex items-center justify-center gap-3">
           <span>👑</span>
@@ -50,7 +50,8 @@ export default async function EliteBoard() {
 
       <div className="mt-12 mx-auto max-w-xl text-center border-4 border-black rounded-2xl bg-[#FACC14] px-8 py-10 shadow-[6px_6px_0px_0px_#000]">
         <p className="text-2xl font-black text-black leading-snug">
-          👀 You'll be able to see top performing contestants here at the final.
+          You&apos;ll be able to see top performing contestants here at the
+          final.
         </p>
       </div>
     </section>

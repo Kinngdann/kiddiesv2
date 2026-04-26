@@ -5,7 +5,6 @@ import Profile from "./components/profile";
 import { ShareLink } from "./components/share";
 import { capitalize } from "@/utils/capitalize";
 import type { Metadata } from "next";
-import StageTwoComingSoon from "./components/stage-two-coming";
 
 interface ContestantPageParams {
   params: Promise<{ contestantId: string }>;
@@ -93,15 +92,7 @@ export default async function Contestant({ params }: ContestantPageParams) {
 
   return (
     <section className="fb-col-wrapper pt-20 md:pt-32">
-      {/* <StageTwoComingSoon
-        contestant={{
-          name: contestant.name,
-          picture: user.picture,
-          gender: user.gender,
-          stage1vote: user.stage1vote,
-        }}
-      /> */}
-      {user.currentStage === 2 && !user.votingOpen && <StageTwoComingSoon />}
+      {/* {user.currentStage === 2 && !user.votingOpen && <StageTwoComingSoon />} */}
       {countdownTarget && (
         <Countdown target={countdownTarget} header={countdownHeader} />
       )}
