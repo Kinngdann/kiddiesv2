@@ -28,7 +28,10 @@ const Star = ({
 const toRad = (d: number) => (d * Math.PI) / 180;
 const r4 = (n: number) => Math.round(n * 10000) / 10000;
 const SUNBURST_PATHS = Array.from({ length: 20 }, (_, i) => {
-  const cx = 180, cy = 180, r = 175, halfSpread = 5;
+  const cx = 180,
+    cy = 180,
+    r = 175,
+    halfSpread = 5;
   const angle = (i * 360) / 20;
   const x1 = r4(cx + r * Math.cos(toRad(angle - halfSpread)));
   const y1 = r4(cy + r * Math.sin(toRad(angle - halfSpread)));
@@ -44,8 +47,7 @@ const Sunburst = () => (
     viewBox="0 0 360 360"
     aria-hidden
     className="absolute pointer-events-none"
-    style={{ top: -56, left: "50%", transform: "translateX(-50%)", zIndex: 0 }}
-  >
+    style={{ top: -56, left: "50%", transform: "translateX(-50%)", zIndex: 0 }}>
     {SUNBURST_PATHS.map((d, i) => (
       <path key={i} d={d} fill="#FACC14" opacity="0.18" />
     ))}
@@ -53,16 +55,16 @@ const Sunburst = () => (
 );
 
 const CONFETTI = [
-  { x: "7%",  y: "6%",  color: "#FACC14", size: 10, rotate: 15 },
-  { x: "82%", y: "4%",  color: "#A855F7", size: 8,  rotate: -20 },
-  { x: "5%",  y: "38%", color: "#22C55E", size: 7,  rotate: 30 },
-  { x: "88%", y: "32%", color: "#FB923C", size: 9,  rotate: -10 },
-  { x: "14%", y: "68%", color: "#A855F7", size: 6,  rotate: 45 },
-  { x: "80%", y: "65%", color: "#22C55E", size: 8,  rotate: -35 },
-  { x: "45%", y: "3%",  color: "#FB923C", size: 6,  rotate: 20 },
-  { x: "55%", y: "78%", color: "#FACC14", size: 7,  rotate: -25 },
-  { x: "25%", y: "15%", color: "#A855F7", size: 5,  rotate: 0  },
-  { x: "70%", y: "18%", color: "#22C55E", size: 5,  rotate: 55 },
+  { x: "7%", y: "6%", color: "#FACC14", size: 10, rotate: 15 },
+  { x: "82%", y: "4%", color: "#A855F7", size: 8, rotate: -20 },
+  { x: "5%", y: "38%", color: "#22C55E", size: 7, rotate: 30 },
+  { x: "88%", y: "32%", color: "#FB923C", size: 9, rotate: -10 },
+  { x: "14%", y: "68%", color: "#A855F7", size: 6, rotate: 45 },
+  { x: "80%", y: "65%", color: "#22C55E", size: 8, rotate: -35 },
+  { x: "45%", y: "3%", color: "#FB923C", size: 6, rotate: 20 },
+  { x: "55%", y: "78%", color: "#FACC14", size: 7, rotate: -25 },
+  { x: "25%", y: "15%", color: "#A855F7", size: 5, rotate: 0 },
+  { x: "70%", y: "18%", color: "#22C55E", size: 5, rotate: 55 },
 ];
 
 export default function PosterCanvas({ data }: { data: PosterData }) {
@@ -87,7 +89,6 @@ export default function PosterCanvas({ data }: { data: PosterData }) {
           background: "#FFFDF0",
           flexShrink: 0,
         }}>
-
         {/* Background confetti dot pattern */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -105,16 +106,24 @@ export default function PosterCanvas({ data }: { data: PosterData }) {
         />
 
         {/* Corner large faint stars */}
-        <div className="absolute -top-2 -left-2 pointer-events-none" style={{ opacity: 0.12 }}>
+        <div
+          className="absolute -top-2 -left-2 pointer-events-none"
+          style={{ opacity: 0.12 }}>
           <Star color="#FACC14" size={64} />
         </div>
-        <div className="absolute -top-2 -right-2 pointer-events-none" style={{ opacity: 0.12, transform: "rotate(20deg)" }}>
+        <div
+          className="absolute -top-2 -right-2 pointer-events-none"
+          style={{ opacity: 0.12, transform: "rotate(20deg)" }}>
           <Star color="#A855F7" size={56} />
         </div>
-        <div className="absolute bottom-[76px] -left-3 pointer-events-none" style={{ opacity: 0.1, transform: "rotate(-15deg)" }}>
+        <div
+          className="absolute bottom-[76px] -left-3 pointer-events-none"
+          style={{ opacity: 0.1, transform: "rotate(-15deg)" }}>
           <Star color="#22C55E" size={52} />
         </div>
-        <div className="absolute bottom-[72px] -right-3 pointer-events-none" style={{ opacity: 0.1, transform: "rotate(10deg)" }}>
+        <div
+          className="absolute bottom-[72px] -right-3 pointer-events-none"
+          style={{ opacity: 0.1, transform: "rotate(10deg)" }}>
           <Star color="#FB923C" size={48} />
         </div>
 
@@ -133,11 +142,15 @@ export default function PosterCanvas({ data }: { data: PosterData }) {
         </div>
 
         {/* ── STAGE RIBBON ── */}
-        <div className="relative shrink-0 z-20 overflow-hidden" style={{ height: 36, background: "#111" }}>
+        <div
+          className="relative shrink-0 z-20 overflow-hidden"
+          style={{ height: 36, background: "#111" }}>
           <div className="flex items-center justify-center h-full gap-3">
             <Star color="#FACC14" size={11} />
-            <span className="font-black text-white tracking-[0.25em] uppercase" style={{ fontSize: "0.75rem", letterSpacing: "0.3em" }}>
-              Stage One
+            <span
+              className="font-black text-white tracking-[0.25em] uppercase"
+              style={{ fontSize: "0.75rem", letterSpacing: "0.3em" }}>
+              Stage Two
             </span>
             <Star color="#FACC14" size={11} />
           </div>
@@ -145,7 +158,6 @@ export default function PosterCanvas({ data }: { data: PosterData }) {
 
         {/* ── MAIN BODY ── */}
         <div className="relative flex flex-col items-center flex-1 overflow-hidden">
-
           {/* Sunburst behind photo */}
           <Sunburst />
 
@@ -195,7 +207,11 @@ export default function PosterCanvas({ data }: { data: PosterData }) {
               className="relative w-full h-full rounded-full overflow-hidden border-4 border-black"
               style={{ boxShadow: "4px 4px 0 #FACC14" }}>
               <Image
-                src={data.pic ? `/poster-pics/${data.pic}` : `/avatar-${data.gender}.jpg`}
+                src={
+                  data.pic
+                    ? `/poster-pics/${data.pic}`
+                    : `/avatar-${data.gender}.jpg`
+                }
                 alt={name}
                 fill
                 className="object-cover object-top"
@@ -219,8 +235,12 @@ export default function PosterCanvas({ data }: { data: PosterData }) {
                 AGE
               </span>
               <div className="flex items-baseline justify-center gap-[2px] leading-none w-full px-1">
-                <span className="text-[1.1rem] text-black leading-none">{data.age}</span>
-                <span className="text-[0.44rem] tracking-wide text-black/50 uppercase font-bold">{data.ageUnit}</span>
+                <span className="text-[1.1rem] text-black leading-none">
+                  {data.age}
+                </span>
+                <span className="text-[0.44rem] tracking-wide text-black/50 uppercase font-bold">
+                  {data.ageUnit}
+                </span>
               </div>
             </div>
 

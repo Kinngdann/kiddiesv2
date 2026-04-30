@@ -81,12 +81,11 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
     router.refresh();
   };
 
-  const srcImage =
-    !contestant.picture
-      ? contestant.gender?.toLowerCase() === "male"
-        ? malePic
-        : femalePic
-      : `/${contestant.picture}`;
+  const srcImage = !contestant.picture
+    ? contestant.gender?.toLowerCase() === "male"
+      ? malePic
+      : femalePic
+    : `/${contestant.picture}`;
 
   return (
     <>
@@ -98,7 +97,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
       />
 
       {/* Urgency popup — shown after 5s if below threshold */}
-      <Dialog open={urgencyOpen} onOpenChange={setUrgencyOpen}>
+      {/* <Dialog open={urgencyOpen} onOpenChange={setUrgencyOpen}>
         <DialogContent className="bg-white sm:max-w-sm border-2 border-black shadow-[6px_6px_0px_#111]">
           <DialogHeader className="space-y-2">
             <DialogTitle className="text-black font-bold text-xl">
@@ -134,7 +133,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
             </button>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {/* Profile photo */}
       <div className="full-bleed max-h-96 md:max-h-120 overflow-hidden md:rounded-2xl md:border-2 md:border-black md:shadow-[6px_6px_0px_#111] md:col-start-2 md:col-span-6">
