@@ -12,8 +12,9 @@
 # testing 
 /coverage 
 
-# next.js 
-/.next/ 
+# next.js
+/.next/cache/
+/.next/dev/
 /out/ 
 
 # dev 

@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/stage-transition/layout,_N_T_/admin/stage-transition/page,_N_T_/admin/stage-transition"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/admin/stage-transition/__PAGE__",
+    "/admin/stage-transition",
+    "/admin",
+    "/_index",
+    "/_head"
+  ]
+}
