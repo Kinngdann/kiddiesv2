@@ -4,13 +4,12 @@ import Image from "next/image";
 import VotingForm from "./voting-form";
 import PastVotes from "./past-votes";
 import { capitalize } from "@/utils/capitalize";
+import { contestantImageSrc } from "@/utils/contestant-image";
 import { nthPosition } from "@/utils/format-position";
 import { getEarnedMilestones, getNextMilestone } from "@/utils/vote-milestones";
 import { useState } from "react";
 import { ShowVoteSuccess } from "./voting-success";
 import { useRouter } from "next/navigation";
-const malePic = "/avatar-male.jpg";
-const femalePic = "/avatar-female.jpg";
 
 type contestantProps = {
   contestant: {
@@ -37,6 +36,7 @@ type contestantProps = {
       createdAt: string;
       keepAnonymous: boolean | null;
     }[];
+    appUrl?: string;
   };
   isVotingOpen: boolean;
 };
@@ -59,11 +59,11 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
     router.refresh();
   };
 
-  const srcImage = !contestant.picture
-    ? contestant.gender?.toLowerCase() === "male"
-      ? malePic
-      : femalePic
-    : `/${contestant.picture}`;
+  const srcImage = contestantImageSrc(
+    contestant.picture,
+    contestant.gender,
+    contestant.appUrl,
+  );
 
   return (
     <>

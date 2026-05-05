@@ -77,6 +77,7 @@ export default async function Contestant({ params }: ContestantPageParams) {
   const user = await response.json();
   const contestant = {
     ...user,
+    appUrl: APP_URL,
     name: [user.firstName, user.lastName]
       .filter(Boolean)
       .map(capitalize)

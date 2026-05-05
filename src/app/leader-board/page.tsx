@@ -1,36 +1,20 @@
-import { getContestConfig, stageVoteField } from "@/lib/contest-config";
-import { prisma } from "@/lib/prisma";
 import Countdown from "../contestant/[contestantId]/components/countdown";
 import LeaderboardClient, { LeaderboardContestant } from "./leaderboard-client";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 export default async function LeaderBoardPage() {
-  const config = await getContestConfig();
-  const field = stageVoteField(config.currentStage);
+  const [contestantsResponse, configResponse] = await Promise.all([
+    fetch(`${APP_URL}/api/contestant?rank=top`, { cache: "no-store" }),
+    fetch(`${APP_URL}/api/contest-config`, { cache: "no-store" }),
+  ]);
 
-  const raw = await prisma.contestant.findMany({
-    where: { disabled: false },
-    select: {
-      contestantId: true,
-      firstName: true,
-      lastName: true,
-      gender: true,
-      stage1vote: true,
-      stage2vote: true,
-      stage3vote: true,
-      picture: true,
-    },
-    orderBy: { [field]: "desc" },
-    take: 5,
-  });
-
-  const topContestants: LeaderboardContestant[] = raw.map((c) => ({
-    contestantId: c.contestantId,
-    firstName: c.firstName,
-    lastName: c.lastName,
-    gender: c.gender,
-    picture: c.picture,
-    currentVotes: c[field],
-  }));
+  const topContestants: LeaderboardContestant[] = contestantsResponse.ok
+    ? await contestantsResponse.json()
+    : [];
+  const config: { endDate?: string | null } = configResponse.ok
+    ? await configResponse.json()
+    : {};
   const countdownTarget = config.endDate
     ? new Date(config.endDate).toISOString().split("T")[0]
     : "";
@@ -56,7 +40,7 @@ export default async function LeaderBoardPage() {
       </div>
 
       <div className="mt-6 mx-auto max-w-xl">
-        <LeaderboardClient initial={topContestants} />
+        <LeaderboardClient appUrl={APP_URL} initial={topContestants} />
       </div>
     </section>
   );

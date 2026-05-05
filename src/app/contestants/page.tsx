@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import { capitalize } from "@/utils/capitalize";
+import { contestantImageSrc } from "@/utils/contestant-image";
 import Image from "next/image";
 import Link from "next/link";
-const malePic = "/avatar-male.jpg";
-const femalePic = "/avatar-female.jpg";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 const ACCENT_COLORS = [
   "bg-[#FACC14]",
@@ -76,13 +77,7 @@ export default async function Contestants({
             <div className="h-72 overflow-hidden relative">
               <Image
                 alt={`${contestant.firstName} ${contestant.lastName}`}
-                src={
-                  contestant.picture
-                    ? `/${contestant.picture}`
-                    : contestant.gender?.toLowerCase() === "male"
-                      ? malePic
-                      : femalePic
-                }
+                src={contestantImageSrc(contestant.picture, contestant.gender, APP_URL)}
                 fill
                 className="object-cover object-top"
               />

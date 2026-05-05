@@ -4,10 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Crown } from "lucide-react";
 import { capitalize } from "@/utils/capitalize";
+import { contestantImageSrc } from "@/utils/contestant-image";
 import { nthPosition } from "@/utils/format-position";
-
-const malePic = "/avatar-male.jpg";
-const femalePic = "/avatar-female.jpg";
 
 export type LeaderboardContestant = {
   contestantId: string;
@@ -19,6 +17,7 @@ export type LeaderboardContestant = {
 };
 
 type Props = {
+  appUrl?: string;
   initial: LeaderboardContestant[];
 };
 
@@ -28,7 +27,7 @@ const rankConfig = [
   { bg: "bg-[#22C55E]", badge: "bg-black text-[#22C55E]", showCrown: false },
 ];
 
-export default function LeaderboardClient({ initial }: Props) {
+export default function LeaderboardClient({ appUrl, initial }: Props) {
   const contestants = Array.isArray(initial) ? initial : [];
 
   if (contestants.length === 0) {
@@ -70,13 +69,7 @@ export default function LeaderboardClient({ initial }: Props) {
                 <div className="w-16 h-24 overflow-hidden shrink-0 relative">
                   <Image
                     alt={`${contestant.firstName} ${contestant.lastName}`}
-                    src={
-                      contestant.picture
-                        ? `/${contestant.picture}`
-                        : contestant.gender?.toLowerCase() === "male"
-                          ? malePic
-                          : femalePic
-                    }
+                    src={contestantImageSrc(contestant.picture, contestant.gender, appUrl)}
                     fill
                     priority
                     className="object-cover object-top"
