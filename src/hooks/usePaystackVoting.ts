@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { usePaystackPayment } from "react-paystack";
 
 interface PaystackVoteConfig {
@@ -7,9 +8,10 @@ interface PaystackVoteConfig {
 }
 
 export function usePaystackVoting(config: PaystackVoteConfig) {
+  const reference = useId().replaceAll(":", "");
 
   const initializePayment = usePaystackPayment({
-    reference: Date.now().toString(),
+    reference,
     email: config.email,
     amount: config.amount,
     publicKey: config.publicKey,

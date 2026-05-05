@@ -68,7 +68,6 @@ export default function RegistrationForm() {
     defaultValues: { gender: "", age: "" },
   });
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const imageFile = watch("picture");
 
   useEffect(() => {
@@ -128,7 +127,7 @@ export default function RegistrationForm() {
             <span className="text-[#FACC14]">Shine!</span>
           </h1>
           <p className="text-gray-300 font-semibold leading-relaxed max-w-[40ch] text-sm">
-            Register your child today and join Nigeria's most exciting kids contest.
+            Register your child today and join Nigeria&apos;s most exciting kids contest.
             Campaign, gather votes, and win life-changing prizes!
           </p>
           <div className="space-y-3 pt-2">

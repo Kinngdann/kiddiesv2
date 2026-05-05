@@ -86,7 +86,7 @@ export default function VotingForm({
       setActiveDialog("first");
       onTriggerConsumed?.();
     }
-  }, [triggerOpen]);
+  }, [onTriggerConsumed, triggerOpen]);
 
   const onSubmit: SubmitHandler<IFormInput> = async () => {};
 

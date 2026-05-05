@@ -19,7 +19,8 @@
 import fs from "fs";
 import path from "path";
 
-const API_URL = process.env.API_URL?.replace(/\/$/, "") || "http://localhost:3009";
+// const API_URL = process.env.API_URL?.replace(/\/$/, "") || "http://localhost:3009";
+const API_URL = "https://leadritehub.com" || "http://localhost:3009";
 
 // ── CSV parser ────────────────────────────────────────────────────────────────
 
@@ -31,7 +32,9 @@ function parseCSV(content) {
     .filter((l) => l.trim())
     .map((line) => {
       const fields = splitLine(line);
-      return Object.fromEntries(headers.map((h, i) => [h, (fields[i] ?? "").trim()]));
+      return Object.fromEntries(
+        headers.map((h, i) => [h, (fields[i] ?? "").trim()]),
+      );
     });
 }
 
@@ -40,8 +43,15 @@ function splitLine(line) {
   let cur = "";
   let inQuotes = false;
   for (const ch of line) {
-    if (ch === '"') { inQuotes = !inQuotes; continue; }
-    if (ch === "," && !inQuotes) { fields.push(cur); cur = ""; continue; }
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if (ch === "," && !inQuotes) {
+      fields.push(cur);
+      cur = "";
+      continue;
+    }
     cur += ch;
   }
   fields.push(cur);
@@ -71,7 +81,10 @@ async function updatePicture(contestantId, photoPath) {
   formData.append("contestantId", contestantId);
   formData.append("picture", blob, path.basename(photoPath));
 
-  const res = await fetch(`${API_URL}/api/contestant`, { method: "PUT", body: formData });
+  const res = await fetch(`${API_URL}/api/contestant`, {
+    method: "PUT",
+    body: formData,
+  });
   const json = await res.json();
 
   if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
@@ -85,8 +98,8 @@ async function main() {
   if (!photosDir) {
     console.error(
       "Usage: node scripts/update-pictures.mjs <photos-dir> [csv-path]\n" +
-      "  photos-dir  directory containing photo files\n" +
-      "  csv-path    optional CSV with columns: ID, Photo"
+        "  photos-dir  directory containing photo files\n" +
+        "  csv-path    optional CSV with columns: ID, Photo",
     );
     process.exit(1);
   }
@@ -142,4 +155,7 @@ async function main() {
   console.log(`\nDone — ${passed} updated, ${failed} failed.\n`);
 }
 
-main().catch((err) => { console.error(err); process.exit(1); });
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

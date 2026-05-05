@@ -6,16 +6,9 @@ import PastVotes from "./past-votes";
 import { capitalize } from "@/utils/capitalize";
 import { nthPosition } from "@/utils/format-position";
 import { getEarnedMilestones, getNextMilestone } from "@/utils/vote-milestones";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { ShowVoteSuccess } from "./voting-success";
 import { useRouter } from "next/navigation";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@ui/dialog";
 const malePic = "/avatar-male.jpg";
 const femalePic = "/avatar-female.jpg";
 
@@ -54,22 +47,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
   const [successDialogData, setSuccessDialogData] = useState<{
     vote: string;
   }>();
-  const [urgencyOpen, setUrgencyOpen] = useState(false);
-  const urgencyShown = useRef(false);
   const [triggerVoteForm, setTriggerVoteForm] = useState(false);
-
-  const STAGE_THRESHOLD = 300;
-  const currentVotes = contestant.currentVotes ?? contestant.stage2vote ?? 0;
-  const votesNeeded = STAGE_THRESHOLD - currentVotes;
-
-  useEffect(() => {
-    if (urgencyShown.current || currentVotes >= STAGE_THRESHOLD) return;
-    const timer = setTimeout(() => {
-      setUrgencyOpen(true);
-      urgencyShown.current = true;
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [currentVotes]);
 
   const updateSuccessDialogData = (numberOfVotes: string) => {
     setSuccessDialogData({ vote: numberOfVotes });
@@ -95,45 +73,6 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
         vote={successDialogData?.vote || "0"}
         contestantName={contestant.name}
       />
-
-      {/* Urgency popup — shown after 5s if below threshold */}
-      {/* <Dialog open={urgencyOpen} onOpenChange={setUrgencyOpen}>
-        <DialogContent className="bg-white sm:max-w-sm border-2 border-black shadow-[6px_6px_0px_#111]">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-black font-bold text-xl">
-              {contestant.name} needs your help!
-            </DialogTitle>
-            <DialogDescription className="text-gray-600 text-sm leading-relaxed">
-              To advance to the next stage, contestants must reach{" "}
-              <span className="font-bold text-black">
-                {STAGE_THRESHOLD} votes
-              </span>
-              . {contestant.name} currently has{" "}
-              <span className="font-bold text-black">{currentVotes} votes</span>{" "}
-              and needs{" "}
-              <span className="font-bold text-[#A855F7]">
-                {votesNeeded} more
-              </span>{" "}
-              to qualify.
-              <br />
-              <br />
-              Every vote counts, be the reason they make it to the next round!
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-3 mt-2">
-            <button
-              onClick={() => { setUrgencyOpen(false); setTriggerVoteForm(true); }}
-              className="flex-1 text-center bg-[#FACC14] text-black font-bold text-sm px-6 py-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition">
-              Vote Now
-            </button>
-            <button
-              onClick={() => setUrgencyOpen(false)}
-              className="text-sm font-semibold text-gray-400 hover:text-gray-600 transition px-3">
-              Dismiss
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog> */}
 
       {/* Profile photo */}
       <div className="full-bleed max-h-96 md:max-h-120 overflow-hidden md:rounded-2xl md:border-2 md:border-black md:shadow-[6px_6px_0px_#111] md:col-start-2 md:col-span-6">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@ui/button";
 import {
   Dialog,
@@ -21,12 +21,10 @@ type ShareLinkProps = {
 };
 
 export function ShareLink({ contestantName }: ShareLinkProps) {
-  const [url, setUrl] = useState("");
+  const [url] = useState(() =>
+    typeof window === "undefined" ? "" : window.location.href,
+  );
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    setUrl(window.location.href);
-  }, []);
 
   const whatsappText = contestantName
     ? `Help ${contestantName} win the Future Star Challenge! Every vote is only ₦50. Vote here: ${url}`
