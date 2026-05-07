@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
       if (votesToAdd < 1) {
         return NextResponse.json({ error: "Insufficient payment amount" }, { status: 400 });
       }
+
     } else if (voteMethod === "bank_tx") {
       // Bank transfer: amount provided by admin, no external verification needed
       const amount = Number(data.amount);
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
       sendWhatsApp(
         d.whatsapp,
         `Hi ${d.parent}, just a heads-up — ${d.firstName} has just been overtaken by ${voterName_} in The Future Star Contest. Rally more votes to help ${d.firstName} climb back up! Vote at ${process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net"}`
-      ).catch(() => {}); // non-blocking
+      ).catch(() => { }); // non-blocking
     }
 
     return NextResponse.json(updatedContestant);
@@ -114,4 +115,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

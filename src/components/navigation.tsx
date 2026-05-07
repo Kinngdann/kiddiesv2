@@ -10,7 +10,7 @@ const navigationLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/#about" },
   { name: "Contestants", href: "/contestants" },
-  { name: "Leaderboard Board", href: "/leader-board" },
+  { name: "Leaderboard", href: "/leader-board" },
   { name: "Privacy Policy", href: "/privacy-policy" },
 ];
 
