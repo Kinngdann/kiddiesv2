@@ -34,7 +34,7 @@ export default async function LeaderBoardPage() {
             <span>Leader Board</span>
           </h2>
           <p className="text-gray-600 font-semibold text-sm">
-            Top contestants for the final
+            Winners of the contest
           </p>
         </div>
       </div>
