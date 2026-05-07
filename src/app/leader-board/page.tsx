@@ -21,9 +21,9 @@ export default async function LeaderBoardPage() {
 
   return (
     <section className="fb-col-wrapper pt-20 pb-16">
-      {countdownTarget && (
+      {/* {countdownTarget && (
         <Countdown target={countdownTarget} header="Winners will emerge in" />
-      )}
+      )} */}
 
       <div className="text-center space-y-3">
         <span className="inline-flex items-center gap-2 bg-[#FACC14] text-black font-bold text-xs px-4 py-1.5 rounded-full border-2 border-black tracking-wider uppercase">
