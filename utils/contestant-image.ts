@@ -8,6 +8,7 @@ export function contestantImageSrc(
 ) {
   const fallback = gender?.toLowerCase() === "male" ? malePic : femalePic;
   if (!picture) return fallback;
+  if (/^https?:\/\//i.test(picture)) return picture;
 
   const normalizedPath = picture.startsWith("/") ? picture : `/${picture}`;
   return appUrl ? `${appUrl}${normalizedPath}` : normalizedPath;

@@ -1,11 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  typescript: {
-    // Generated Prisma client files are created at build time;
-    // the TS checker runs before they're visible to it. Safe to skip.
-    ignoreBuildErrors: true,
-  },
   images: {
 
     remotePatterns: [
@@ -22,6 +17,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "leadritehub.com",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
       },
     ]
   }

@@ -50,7 +50,7 @@ export default function NoUserFound() {
         <EmptyContent>
           <div className="flex gap-2">
             <Button variant="outline" asChild>
-              <Link href="/all-contestants">See all contestants</Link>
+              <Link href="/contestants">See all contestants</Link>
             </Button>
             <Button asChild>
               <Link href="/register">Register</Link>

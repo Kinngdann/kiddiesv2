@@ -14,8 +14,8 @@ import BackToTop from "./back-to-top";
 const quickLinks = [
   { name: "Home", link: "/" },
   { name: "About", link: "/#about" },
-  { name: "All Contestants", link: "/all-contestants" },
-  { name: "Elite Board", link: "/elite-board" },
+  { name: "All Contestants", link: "/contestants" },
+  { name: "Leader Board", link: "/leader-board" },
   { name: "Register", link: "/register" },
   { name: "Privacy Policy", link: "/privacy-policy" },
 ];

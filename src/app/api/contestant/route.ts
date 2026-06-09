@@ -1,8 +1,87 @@
 import { prisma } from "@/lib/prisma"
 import { getContestConfig, stageVoteField } from "@/lib/contest-config"
+import { isAdminSession } from "@/lib/admin-auth";
+import { storeContestantImage } from "@/lib/image-upload";
+import { Prisma } from "@/src/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server"
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
+
+const publicContestantSelect = {
+  contestantId: true,
+  firstName: true,
+  lastName: true,
+  stage1vote: true,
+  stage2vote: true,
+  stage3vote: true,
+  gender: true,
+  age: true,
+  picture: true,
+} satisfies Prisma.ContestantSelect;
+
+function isUniqueConstraintError(error: unknown) {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2002"
+  );
+}
+
+function imageUploadErrorResponse(error: unknown) {
+  if (!(error instanceof Error)) return null;
+
+  if (error.message === "INVALID_IMAGE_TYPE") {
+    return NextResponse.json(
+      { error: "Please upload a JPG, PNG, or WebP image." },
+      { status: 400 },
+    );
+  }
+
+  if (error.message === "IMAGE_TOO_LARGE") {
+    return NextResponse.json(
+      { error: "Image must be 5MB or smaller." },
+      { status: 400 },
+    );
+  }
+
+  if (error.message === "IMAGE_STORAGE_NOT_CONFIGURED") {
+    return NextResponse.json(
+      { error: "Image storage is not configured." },
+      { status: 503 },
+    );
+  }
+
+  if (error.message === "IMAGE_UPLOAD_FAILED") {
+    return NextResponse.json(
+      { error: "Image upload failed. Please try again." },
+      { status: 502 },
+    );
+  }
+
+  return null;
+}
+
+async function nextContestantId() {
+  const existingCount = await prisma.contestant.count();
+
+  try {
+    const counter = await prisma.counter.upsert({
+      where: { key: "contestant" },
+      update: { value: { increment: 1 } },
+      create: { key: "contestant", value: existingCount + 1 },
+    });
+
+    return String(counter.value).padStart(3, "0");
+  } catch (error) {
+    if (!isUniqueConstraintError(error)) {
+      throw error;
+    }
+
+    const counter = await prisma.counter.update({
+      where: { key: "contestant" },
+      data: { value: { increment: 1 } },
+    });
+
+    return String(counter.value).padStart(3, "0");
+  }
+}
 
 export async function GET(request: NextRequest) {
 
@@ -18,24 +97,17 @@ export async function GET(request: NextRequest) {
 
       const raw = await prisma.contestant.findMany({
         where: { disabled: false },
-        select: {
-          contestantId: true,
-          firstName: true,
-          lastName: true,
-          stage1vote: true,
-          stage2vote: true,
-          stage3vote: true,
-          gender: true,
-          age: true,
-          picture: true,
-        },
+        select: publicContestantSelect,
         orderBy: { [field]: "desc" },
         take: 5,
       });
 
       contestants = raw.map((c) => ({ ...c, currentVotes: c[field] }));
     } else {
-      contestants = await prisma.contestant.findMany({ where: { disabled: false } })
+      contestants = await prisma.contestant.findMany({
+        where: { disabled: false },
+        select: publicContestantSelect,
+      })
     }
 
     return NextResponse.json(contestants);
@@ -57,29 +129,20 @@ export async function POST(request: NextRequest) {
     const parent = formData.get("parent");
     const phone = formData.get("phone");
     const whatsapp = formData.get("whatsapp");
-    const picture = formData.get('picture') as File | null;
+    const picture = formData.get("picture") as File | null;
     const videoUrl = formData.get("videoUrl") as string | null;
 
-    let fileName;
-
-    if (picture) {
-      const buffer = Buffer.from(await picture.arrayBuffer());
-
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      await mkdir(uploadDir, { recursive: true });
-
-      fileName = `${Date.now()}-${firstName}_${lastName}-${picture.name}`;
-      const filePath = path.join(uploadDir, fileName);
-
-      await writeFile(filePath, buffer);
+    if (!firstName || !lastName || !gender || !age || !parent || !phone || !whatsapp || !picture) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    let pictureUrl: string | null = null;
 
-    if (!firstName || !age || !phone || !whatsapp)
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (picture) {
+      pictureUrl = await storeContestantImage(picture, "contestants");
+    }
 
-    const totalContestants = await prisma.contestant.count();
-    const nextId = String(totalContestants + 1).padStart(3, "0");
+    const nextId = await nextContestantId();
 
     const contestant = await prisma.contestant.create({
       data: {
@@ -88,7 +151,7 @@ export async function POST(request: NextRequest) {
         lastName: String(lastName),
         gender: String(gender),
         age: String(age),
-        picture: picture ? `uploads/${fileName}` : null,
+        picture: pictureUrl,
         videoUrl: videoUrl || null,
         parent: String(parent),
         phone: String(phone),
@@ -98,6 +161,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ name: `${contestant.firstName} ${contestant.lastName}`, id: contestant.contestantId });
   } catch (error) {
+    const uploadResponse = imageUploadErrorResponse(error);
+    if (uploadResponse) return uploadResponse;
+
     console.error("Error creating contestant:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -105,6 +171,10 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    if (!(await isAdminSession())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const formData = await request.formData();
 
     const contestantId = formData.get("contestantId") as string | null;
@@ -117,27 +187,22 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const buffer = Buffer.from(await picture.arrayBuffer());
-
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-
-    const fileName = `${Date.now()}-${contestantId}-${picture.name}`;
-    const filePath = path.join(uploadDir, fileName);
-
-    await writeFile(filePath, buffer);
+    const pictureUrl = await storeContestantImage(picture, "contestants");
 
     const contestant = await prisma.contestant.update({
       where: {
         contestantId,
       },
       data: {
-        picture: `uploads/${fileName}`,
+        picture: pictureUrl,
       },
     });
 
     return NextResponse.json({ contestant }, { status: 200 });
   } catch (error) {
+    const uploadResponse = imageUploadErrorResponse(error);
+    if (uploadResponse) return uploadResponse;
+
     console.error(error);
 
     return NextResponse.json(

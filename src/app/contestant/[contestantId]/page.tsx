@@ -3,21 +3,70 @@ import HowToVote from "./components/how-to-vote";
 import NoUserFound from "./components/not-found";
 import Profile from "./components/profile";
 import { ShareLink } from "./components/share";
+import { prisma } from "@/lib/prisma";
+import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import { capitalize } from "@/utils/capitalize";
+import { contestantImageSrc } from "@/utils/contestant-image";
 import type { Metadata } from "next";
 
 interface ContestantPageParams {
   params: Promise<{ contestantId: string }>;
 }
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net";
 
 async function fetchContestant(contestantId: string) {
-  const res = await fetch(`${APP_URL}/api/contestant/${contestantId}`, {
-    cache: "no-store",
+  const contestant = await prisma.contestant.findUnique({
+    where: { contestantId, disabled: false },
+    select: {
+      contestantId: true,
+      firstName: true,
+      lastName: true,
+      stage1vote: true,
+      stage2vote: true,
+      stage3vote: true,
+      gender: true,
+      age: true,
+      bio: true,
+      picture: true,
+      videoUrl: true,
+      disabled: true,
+      voteLogs: {
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+    },
   });
-  if (!res.ok) return null;
-  return res.json();
+
+  if (!contestant) return null;
+
+  const config = await getContestConfig();
+  const field = stageVoteField(config.currentStage);
+  const contestantCurrentVotes = contestant[field] ?? 0;
+
+  const position = await prisma.contestant.count({
+    where: { [field]: { gte: contestantCurrentVotes }, disabled: false },
+  });
+
+  const preceding = await prisma.contestant.findFirst({
+    where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
+    orderBy: { [field]: "asc" },
+    select: { stage1vote: true, stage2vote: true, stage3vote: true },
+  });
+
+  const precedingVotes = preceding ? preceding[field] : null;
+  const voteDifference = precedingVotes !== null ? precedingVotes - contestantCurrentVotes : null;
+
+  return {
+    ...contestant,
+    currentVotes: contestantCurrentVotes,
+    currentStage: config.currentStage,
+    stageLabel: config.stageLabel,
+    votingOpen: config.votingOpen,
+    endDate: config.endDate?.toISOString() ?? null,
+    position,
+    voteDifference,
+  };
 }
 
 export async function generateMetadata({
@@ -39,7 +88,7 @@ export async function generateMetadata({
   const title = `Vote for ${name} — Contestant #${user.contestantId} | The Future Star Contest`;
   const description = `${name} has ${votes} votes. Help ${pronoun} reach the top! Vote now for ₦50 per vote.`;
   const imageUrl = user.picture
-    ? `${APP_URL}/${user.picture}`
+    ? contestantImageSrc(user.picture, user.gender, APP_URL)
     : `${APP_URL}/logo.svg`;
   const pageUrl = `${APP_URL}/contestant/${contestantId}`;
 
@@ -66,17 +115,21 @@ export async function generateMetadata({
 export default async function Contestant({ params }: ContestantPageParams) {
   const { contestantId } = await params;
 
-  const response = await fetch(`${APP_URL}/api/contestant/${contestantId}`, {
-    cache: "no-store",
-  });
+  const user = await fetchContestant(contestantId);
 
-  if (!response.ok) {
+  if (!user) {
     return <NoUserFound />;
   }
 
-  const user = await response.json();
   const contestant = {
     ...user,
+    bio: user.bio ?? "",
+    picture: user.picture ?? "",
+    voteDifference: user.voteDifference ?? 0,
+    voteLogs: user.voteLogs.map((vote) => ({
+      ...vote,
+      createdAt: vote.createdAt.toISOString(),
+    })),
     appUrl: APP_URL,
     name: [user.firstName, user.lastName]
       .filter(Boolean)

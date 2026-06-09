@@ -44,6 +44,19 @@ model VoteLog {
   updatedAt     DateTime   @default(now()) @updatedAt
 }
 
+model PaystackTransaction {
+  reference     String   @id @map("_id")
+  contestantId  String
+  amount        Int
+  numberOfVotes Int
+  createdAt     DateTime @default(now())
+}
+
+model Counter {
+  key   String @id @map("_id")
+  value Int
+}
+
 model ContestConfig {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   key          String    @unique

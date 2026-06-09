@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Field, FieldError, FieldLabel } from "@ui/field";
 import { Button } from "@ui/button";
 import {
@@ -22,8 +23,11 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Checkbox } from "@ui/checkbox";
 import BankTransferInstructions from "./bank-transfer-intructions";
-import PaystackPaymentProcessing from "./paystack";
 import { VOTE_BUNDLES } from "@/lib/vote-bundles";
+
+const PaystackPaymentProcessing = dynamic(() => import("./paystack"), {
+  ssr: false,
+});
 
 type Props = {
   updateSuccessDialogData: (numberOfVotes: string) => void;

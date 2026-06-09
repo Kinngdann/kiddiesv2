@@ -5,7 +5,7 @@ import { contestantImageSrc } from "@/utils/contestant-image";
 import Image from "next/image";
 import Link from "next/link";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net";
 
 const ACCENT_COLORS = [
   "bg-[#FACC14]",
@@ -123,7 +123,7 @@ export default async function Contestants({
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-1 mt-10">
           <Link
-            href={`/all-contestants?page=${currentPage - 1}`}
+            href={`/contestants?page=${currentPage - 1}`}
             aria-disabled={currentPage === 1}
             className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
               currentPage === 1
@@ -156,7 +156,7 @@ export default async function Contestants({
               ) : (
                 <Link
                   key={p}
-                  href={`/all-contestants?page=${p}`}
+                  href={`/contestants?page=${p}`}
                   className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
                     p === currentPage
                       ? "bg-[#FACC14] shadow-[3px_3px_0px_#111]"
@@ -169,7 +169,7 @@ export default async function Contestants({
           })()}
 
           <Link
-            href={`/all-contestants?page=${currentPage + 1}`}
+            href={`/contestants?page=${currentPage + 1}`}
             aria-disabled={currentPage === totalPages}
             className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-black font-bold text-sm transition ${
               currentPage === totalPages
