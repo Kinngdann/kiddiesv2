@@ -1,6 +1,6 @@
 import "server-only";
 
-import { Prisma } from "@/src/generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import { prisma } from "@/lib/prisma";
 import { sendWhatsApp } from "@/lib/termii";

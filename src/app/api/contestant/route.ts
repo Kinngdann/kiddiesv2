@@ -3,7 +3,7 @@ import { getContestConfig, stageVoteField } from "@/lib/contest-config"
 import { isAdminSession } from "@/lib/admin-auth";
 import { storeContestantImage } from "@/lib/image-upload";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
-import { Prisma } from "@/src/generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server"
 
 const publicContestantSelect = {
