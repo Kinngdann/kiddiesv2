@@ -8,6 +8,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -114,10 +115,10 @@ export default function VotingForm({
             <DialogTitle className="font-bold text-black text-xl">
               Vote for <span className="text-[#A855F7]">{name}</span>
             </DialogTitle>
-            {/* <DialogDescription>
+            <DialogDescription>
               Help <span className="font-bold">{contestant.name}</span> get{" "}
               <span className="font-bold">more votes</span> to win the contest.
-            </DialogDescription> */}
+            </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)}>

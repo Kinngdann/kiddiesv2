@@ -6,10 +6,24 @@ import PastVotes from "./past-votes";
 import { capitalize } from "@/utils/capitalize";
 import { contestantImageSrc } from "@/utils/contestant-image";
 import { nthPosition } from "@/utils/format-position";
-import { getEarnedMilestones, getNextMilestone } from "@/utils/vote-milestones";
-import { useState } from "react";
+import {
+  getEarnedMilestones,
+  getNextMilestone,
+  MILESTONES,
+} from "@/utils/vote-milestones";
+import { useEffect, useRef, useState } from "react";
 import { ShowVoteSuccess } from "./voting-success";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@ui/dialog";
+import { Sparkles } from "lucide-react";
 
 type contestantProps = {
   contestant: {
@@ -22,6 +36,7 @@ type contestantProps = {
     stage2vote: number;
     stage3vote: number;
     currentVotes: number;
+    currentStage: number;
     stageLabel: string;
     position: number;
     picture: string;
@@ -41,15 +56,92 @@ type contestantProps = {
   isVotingOpen: boolean;
 };
 
+const STAGE_REQUIREMENTS: Record<number, number> = {
+  1: 300,
+};
+
+function ageSpotlight(name: string, age: string) {
+  const ageNumber = Number(age);
+
+  if (Number.isNaN(ageNumber)) {
+    return `Meet ${name}, a joyful young contestant with charm, confidence, and a beautiful spirit.`;
+  }
+
+  if (ageNumber === 0) {
+    return `${name} is already winning hearts with every smile, bringing pure joy and sweetness to the Future Star stage.`;
+  }
+
+  if (ageNumber <= 3) {
+    return `${name} is a cheerful little explorer with a bright smile, big personality, and plenty of sparkle.`;
+  }
+
+  if (ageNumber <= 7) {
+    return `${name} is a confident young star with energy, charm, and a beautiful spirit ready to shine.`;
+  }
+
+  return `${name} is a bold and inspiring contestant with star quality, confidence, and a stage-ready spirit.`;
+}
+
 export default function Profile({ contestant, isVotingOpen }: contestantProps) {
   const router = useRouter();
+  const currentVotes = contestant.currentVotes ?? contestant.stage2vote ?? 0;
+  const requiredVotes = STAGE_REQUIREMENTS[contestant.currentStage] ?? null;
+  const requiredMilestone = requiredVotes
+    ? MILESTONES.find((milestone) => milestone.votes === requiredVotes)
+    : null;
+  const votesNeeded = requiredVotes
+    ? Math.max(0, requiredVotes - currentVotes)
+    : 0;
   const [successDialog, setSuccessDialog] = useState<boolean>(false);
   const [successDialogData, setSuccessDialogData] = useState<{
     vote: string;
   }>();
+  const [displayedVotes, setDisplayedVotes] = useState(currentVotes);
   const [triggerVoteForm, setTriggerVoteForm] = useState(false);
+  const [showRequiredVotesPrompt, setShowRequiredVotesPrompt] = useState(
+    votesNeeded > 0,
+  );
+  const displayedVotesRef = useRef(currentVotes);
+  const animationFrameRef = useRef<number | null>(null);
 
-  const updateSuccessDialogData = (numberOfVotes: string) => {
+  const animateVotesTo = (nextVotes: number) =>
+    new Promise<void>((resolve) => {
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+
+    const startVotes = displayedVotesRef.current;
+    const voteDelta = nextVotes - startVotes;
+    const startedAt = performance.now();
+    const duration = 900;
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const nextDisplayedVotes = Math.round(
+        startVotes + voteDelta * easedProgress,
+      );
+
+      displayedVotesRef.current = nextDisplayedVotes;
+      setDisplayedVotes(nextDisplayedVotes);
+
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        animationFrameRef.current = null;
+        resolve();
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(tick);
+  });
+
+  const updateSuccessDialogData = async (numberOfVotes: string) => {
+    const addedVotes = Number(numberOfVotes);
+    if (Number.isSafeInteger(addedVotes) && addedVotes > 0) {
+      await animateVotesTo(displayedVotesRef.current + addedVotes);
+    }
+
     setSuccessDialogData({ vote: numberOfVotes });
     setSuccessDialog(true);
   };
@@ -64,6 +156,16 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
     contestant.gender,
     contestant.appUrl,
   );
+  const bio =
+    contestant.bio?.trim() || ageSpotlight(contestant.name, contestant.age);
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -71,8 +173,62 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
         open={successDialog}
         refreshPage={refreshPage}
         vote={successDialogData?.vote || "0"}
+        totalVotes={displayedVotes}
         contestantName={contestant.name}
       />
+      <Dialog
+        open={showRequiredVotesPrompt}
+        onOpenChange={setShowRequiredVotesPrompt}>
+        <DialogContent className="border-2 border-black bg-white text-center shadow-[6px_6px_0px_#111] sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="grid size-14 place-items-center rounded-2xl border-2 border-black bg-[#FACC14] text-black shadow-[3px_3px_0px_#111]">
+              <Sparkles className="size-7" />
+            </div>
+            <DialogTitle className="text-2xl font-black text-black">
+              {contestant.name} needs your support
+            </DialogTitle>
+            <DialogDescription className="text-sm font-semibold leading-relaxed text-gray-600">
+              {contestant.name} currently has{" "}
+              <span className="font-black text-black">{currentVotes}</span>{" "}
+              {currentVotes === 1 ? "vote" : "votes"}. Help reach{" "}
+              <span className="font-black text-black">
+                {requiredVotes} votes
+              </span>{" "}
+              to meet the {contestant.stageLabel} requirement
+              {requiredMilestone ? ` and unlock ${requiredMilestone.label}` : ""}
+              .
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="rounded-2xl border-2 border-black bg-sky-50 px-4 py-3">
+            <p className="text-xs font-black uppercase tracking-wider text-sky-600">
+              Votes needed
+            </p>
+            <p className="text-4xl font-black leading-none text-black">
+              {votesNeeded}
+            </p>
+          </div>
+
+          <DialogFooter className="sm:justify-center">
+            <DialogClose asChild>
+              <button className="rounded-xl border-2 border-black bg-white px-5 py-3 text-sm font-bold text-black shadow-[3px_3px_0px_#111] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none">
+                Maybe later
+              </button>
+            </DialogClose>
+            {isVotingOpen && (
+              <button
+                className="rounded-xl border-2 border-black bg-[#FACC14] px-5 py-3 text-sm font-bold text-black shadow-[3px_3px_0px_#111] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                onClick={() => {
+                  setShowRequiredVotesPrompt(false);
+                  setTriggerVoteForm(true);
+                }}
+              >
+                Vote now
+              </button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Profile photo */}
       <div className="full-bleed max-h-96 md:max-h-120 overflow-hidden md:rounded-2xl md:border-2 md:border-black md:shadow-[6px_6px_0px_#111] md:col-start-2 md:col-span-6">
@@ -103,10 +259,13 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
               Age {contestant.age}
             </span>
           </div>
-          <blockquote className="mt-4 border-l-4 border-[#FACC14] pl-4 text-gray-600 italic text-left text-sm leading-relaxed">
-            {contestant.bio ??
-              `${contestant.gender?.toLowerCase() === "male" ? "He" : "She"} is a wonderful child with a bright, loving spirit, growing each day into someone any mother would be proud to call her own.`}
-          </blockquote>
+          <div className="mt-4 border-l-4 border-[#FACC14] pl-4 text-left">
+            <p className="text-gray-700 text-sm leading-relaxed">{bio}</p>
+            <p className="mt-3 text-xs font-semibold text-gray-500">
+              Every vote helps {contestant.name} shine brighter and move closer
+              to the crown.
+            </p>
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -117,7 +276,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
                 {contestant.stageLabel ?? "Votes"}
               </p>
               <p className="text-sky-900 font-black text-3xl leading-tight">
-                {contestant.currentVotes ?? contestant.stage2vote}{" "}
+                {displayedVotes.toLocaleString()}{" "}
                 <span className="text-lg font-bold">votes</span>
               </p>
             </div>
@@ -135,7 +294,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
 
           {/* Milestone badges */}
           {(() => {
-            const votes = contestant.currentVotes ?? contestant.stage2vote ?? 0;
+            const votes = displayedVotes;
             const earned = getEarnedMilestones(votes);
             const next = getNextMilestone(votes);
             if (earned.length === 0 && !next) return null;
@@ -178,7 +337,7 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
             </div>
           ) : contestant.voteDifference !== null &&
             contestant.voteDifference > 0 &&
-            (contestant.currentVotes ?? contestant.stage2vote) > 1 &&
+            displayedVotes > 1 &&
             contestant.position - 1 <= 20 ? (
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-gray-500 font-semibold">
@@ -193,9 +352,8 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
                   style={{
                     width: `${Math.min(
                       95,
-                      ((contestant.currentVotes ?? contestant.stage2vote) /
-                        ((contestant.currentVotes ?? contestant.stage2vote) +
-                          contestant.voteDifference)) *
+                      (displayedVotes /
+                        (displayedVotes + contestant.voteDifference)) *
                         100,
                     )}%`,
                   }}

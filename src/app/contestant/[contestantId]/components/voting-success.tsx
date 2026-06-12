@@ -13,11 +13,13 @@ import {
 export function ShowVoteSuccess({
   open,
   vote,
+  totalVotes,
   contestantName,
   refreshPage,
 }: {
   open: boolean;
   vote: string;
+  totalVotes?: number;
   contestantName: string;
   refreshPage: () => void;
 }) {
@@ -38,6 +40,14 @@ export function ShowVoteSuccess({
             <span className="font-bold"> {contestantName}</span>&apos;s total
             vote score. Thank you for your effort.
           </AlertDialogDescription>
+          {typeof totalVotes === "number" && (
+            <AlertDialogDescription>
+              New total:{" "}
+              <span className="font-black text-black">
+                {totalVotes.toLocaleString()} votes
+              </span>
+            </AlertDialogDescription>
+          )}
           <AlertDialogDescription>
             Tap <span className="font-bold">Continue</span> to see the updated
             vote.

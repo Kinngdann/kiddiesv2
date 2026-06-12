@@ -14,7 +14,7 @@ interface ContestantPageParams {
   params: Promise<{ contestantId: string }>;
 }
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://leadritehub.com";
 
 async function fetchContestant(contestantId: string) {
   const contestant = await prisma.contestant.findUnique({
@@ -54,9 +54,10 @@ async function fetchContestant(contestantId: string) {
   const field = stageVoteField(config.currentStage);
   const contestantCurrentVotes = contestant[field] ?? 0;
 
-  const position = await prisma.contestant.count({
-    where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
-  }) + 1;
+  const position =
+    (await prisma.contestant.count({
+      where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
+    })) + 1;
 
   const preceding = await prisma.contestant.findFirst({
     where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
@@ -65,7 +66,8 @@ async function fetchContestant(contestantId: string) {
   });
 
   const precedingVotes = preceding ? preceding[field] : null;
-  const voteDifference = precedingVotes !== null ? precedingVotes - contestantCurrentVotes : null;
+  const voteDifference =
+    precedingVotes !== null ? precedingVotes - contestantCurrentVotes : null;
 
   return {
     ...contestant,
