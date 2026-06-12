@@ -26,8 +26,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
-    ]
-  }
+    ],
+  },
+  outputFileTracingIncludes: {
+    "/*": ["./src/generated/prisma/**/*"],
+  },
 };
 
 export default nextConfig;
