@@ -7,7 +7,7 @@ export const activities = [
   {
     name: 'Register',
     details:
-      "Registration confirms your child as an official The Future Star Contest participant with accurate details.",
+      "Registration confirms your child as an official MyChild&I participant with accurate details.",
     image: asset1
   },
   {
@@ -20,6 +20,6 @@ export const activities = [
   },
 
   {
-    name: 'Win', details: "Winners will be crowned The Future Star, and awarded ₦3,000,000, + school scholarship.", image: asset4
+    name: 'Win', details: "Winners will be crowned The Future Star, and awarded ₦1,800,000, + school scholarship.", image: asset4
   },
 ];

@@ -65,7 +65,7 @@ export default function StageTransitionPage() {
     const response = await fetch("/api/admin/stage-transition", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ threshold }),
+      body: JSON.stringify({ threshold, expectedStage: config?.currentStage }),
     });
     setLoading(false);
 

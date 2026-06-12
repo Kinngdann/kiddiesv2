@@ -4,6 +4,8 @@ import LeaderboardClient, { LeaderboardContestant } from "./leaderboard-client";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net";
 
+export const dynamic = "force-dynamic";
+
 export default async function LeaderBoardPage() {
   const config = await getContestConfig();
   const field = stageVoteField(config.currentStage);

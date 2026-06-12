@@ -5,6 +5,8 @@ type PaystackVerifyResponse = {
     status: string;
     amount: number;
     reference: string;
+    currency?: string;
+    domain?: string;
     customer?: {
       email?: string;
     };

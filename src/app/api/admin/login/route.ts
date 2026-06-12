@@ -1,11 +1,18 @@
 import { compare } from "bcryptjs";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { sessionOptions, SessionData } from "../../../../../lib/session";
 
 export async function POST(request: NextRequest) {
   try {
+    const limited = rateLimit(`admin-login:${clientIp(request)}`, {
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+    });
+    if (limited) return limited;
+
     const { username, password } = await request.json();
     // console.log(username, password);
 

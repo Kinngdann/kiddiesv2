@@ -21,8 +21,16 @@ const quickLinks = [
 ];
 
 const socialLinks = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Facebook, href: "#", label: "Facebook" },
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/leadritehub/",
+    label: "Instagram",
+  },
+  {
+    icon: Facebook,
+    href: "https://web.facebook.com/leadritehub",
+    label: "Facebook",
+  },
   { icon: Youtube, href: "#", label: "YouTube" },
 ];
 
@@ -33,7 +41,6 @@ export default function Footer() {
       <div className="flex justify-between flex-col lg:flex-row items-start lg:items-center bg-[#FACC14] border-b-2 border-black px-8 py-8 lg:px-20 lg:py-10 gap-6">
         <div className="font-bold space-y-1">
           <div className="inline-flex items-center gap-2 bg-black text-[#FACC14] text-xs font-bold px-3 py-1 rounded-full mb-3 tracking-wider uppercase">
-            <span>✨</span>
             <span>Join the Fun</span>
           </div>
           <h2 className="text-black text-[clamp(1.6rem,4vw,2.4rem)] leading-tight">
@@ -48,7 +55,7 @@ export default function Footer() {
           className="h-12 px-8 font-bold bg-black hover:bg-gray-900 text-[#FACC14] max-w-fit rounded-full border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,0.3)]"
           size="lg">
           <Link href="/register" target="_blank">
-            🎉 REGISTER NOW
+            REGISTER NOW
           </Link>
         </Button>
       </div>
@@ -110,7 +117,7 @@ export default function Footer() {
           </div>
           <div className="flex gap-3 items-center">
             <Phone size={16} className="shrink-0" />
-            <p className="text-sm">+234 704 244 2000</p>
+            <p className="text-sm">+234 80 5903 3275 </p>
           </div>
           <div className="flex gap-3 items-center">
             <Mail size={16} className="shrink-0" />

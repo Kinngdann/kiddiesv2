@@ -1,6 +1,7 @@
 import { usePaystackPayment } from "react-paystack";
 import { Button } from "@ui/button";
 import { toast } from "sonner";
+import { useState } from "react";
 
 type VoteData = {
   voterName: string;
@@ -20,24 +21,21 @@ type PaystackProps = {
   paymentData: PaymentData;
 };
 
-const COST_PER_VOTE = 50;
-
 export default function PaystackPaymentProcessing({
   updateSuccessDialogData,
   isFormValid,
   closeAllDialog,
   paymentData,
 }: PaystackProps) {
-  const ref = new Date().getTime().toString();
-
-  const config = {
-    reference: ref,
-    email: `${paymentData.contestantId}-${ref}@kidscrown.net`,
-    amount: Number(paymentData.voteData.numberOfVotes) * (COST_PER_VOTE * 100),
+  const [paymentConfig, setPaymentConfig] = useState({
+    reference: "",
+    email: "",
+    amount: 0,
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "",
-  };
+  });
+  const [initializing, setInitializing] = useState(false);
 
-  const initializePayment = usePaystackPayment(config);
+  const initializePayment = usePaystackPayment(paymentConfig);
 
   const onSuccess = async (transaction: { reference: string }) => {
     const voteData = {
@@ -68,16 +66,46 @@ export default function PaystackPaymentProcessing({
     // Payment modal closed without completing
   };
 
-  const onSubmit = () => {
-    if (isFormValid) {
+  const onSubmit = async () => {
+    if (!isFormValid || initializing) return;
+
+    setInitializing(true);
+    try {
+      const response = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contestantId: paymentData.contestantId,
+          voterName: paymentData.voteData.voterName,
+          numberOfVotes: Number(paymentData.voteData.numberOfVotes),
+          keepAnonymous: paymentData.voteData.keepAnonymous === true,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        toast.error(err.error ?? "Could not initialize payment.");
+        return;
+      }
+
+      const nextConfig = await response.json();
+      setPaymentConfig(nextConfig);
       closeAllDialog();
-      initializePayment({ onSuccess, onClose });
+      initializePayment({
+        config: nextConfig,
+        onSuccess,
+        onClose,
+      });
+    } catch {
+      toast.error("Could not initialize payment.");
+    } finally {
+      setInitializing(false);
     }
   };
 
   return (
-    <Button onClick={onSubmit} type="submit">
-      Continue
+    <Button onClick={onSubmit} type="submit" disabled={initializing}>
+      {initializing ? "Initializing..." : "Continue"}
     </Button>
   );
 }

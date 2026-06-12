@@ -29,6 +29,10 @@ model Contestant {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @default(now()) @updatedAt
   voteLogs     VoteLog[]
+
+  @@index([disabled, stage1vote])
+  @@index([disabled, stage2vote])
+  @@index([disabled, stage3vote])
 }
 
 model VoteLog {
@@ -42,14 +46,22 @@ model VoteLog {
   contestant    Contestant @relation(fields: [contestantId], references: [contestantId])
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @default(now()) @updatedAt
+
+  @@index([contestantId, createdAt])
 }
 
 model PaystackTransaction {
-  reference     String   @id @map("_id")
-  contestantId  String
-  amount        Int
-  numberOfVotes Int
-  createdAt     DateTime @default(now())
+  reference      String        @id @map("_id")
+  contestantId   String
+  amount         Int
+  numberOfVotes  Int
+  stage          Int
+  voterName      String?
+  keepAnonymous  Boolean       @default(false)
+  expectedEmail  String
+  status         PaymentStatus @default(pending)
+  createdAt      DateTime      @default(now())
+  processedAt    DateTime?
 }
 
 model Counter {
@@ -70,4 +82,9 @@ model ContestConfig {
 enum VoteMethod {
   paystack
   bank_tx
+}
+
+enum PaymentStatus {
+  pending
+  processed
 }

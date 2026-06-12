@@ -1,12 +1,17 @@
 import { prisma } from "@/lib/prisma";
 import { getContestConfig, stageVoteField } from "@/lib/contest-config";
+import { isAdminSession } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  if (!(await isAdminSession())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const threshold = Number(searchParams.get("threshold") ?? "0");
 
-  if (isNaN(threshold) || threshold < 0) {
+  if (!Number.isSafeInteger(threshold) || threshold < 0) {
     return NextResponse.json({ error: "Invalid threshold" }, { status: 400 });
   }
 

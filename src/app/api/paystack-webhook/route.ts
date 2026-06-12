@@ -1,23 +1,66 @@
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
+import { recordVerifiedPaystackVote, VoteError } from "@/lib/votes";
 import { NextRequest, NextResponse } from "next/server";
+
+function isValidSignature(signature: string | null, rawBody: string) {
+  const secretKey = process.env.PAYSTACK_SECRET_KEY;
+  if (!signature || !secretKey) return false;
+
+  const expectedSig = createHmac("sha512", secretKey)
+    .update(rawBody)
+    .digest("hex");
+
+  const signatureBuffer = Buffer.from(signature, "hex");
+  const expectedBuffer = Buffer.from(expectedSig, "hex");
+
+  return (
+    signatureBuffer.length === expectedBuffer.length &&
+    timingSafeEqual(signatureBuffer, expectedBuffer)
+  );
+}
 
 export async function POST(request: NextRequest) {
   const signature = request.headers.get("x-paystack-signature");
   const rawBody = await request.text();
 
-  // Validate HMAC-SHA512 signature
-  const expectedSig = createHmac("sha512", process.env.PAYSTACK_SECRET_KEY!)
-    .update(rawBody)
-    .digest("hex");
-
-  if (signature !== expectedSig) {
+  if (!isValidSignature(signature, rawBody)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const event = JSON.parse(rawBody);
+  let event;
+  try {
+    event = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
   if (event.event !== "charge.success") {
     return NextResponse.json({ received: true });
+  }
+
+  const reference = event.data?.reference;
+  const amount = event.data?.amount;
+  const customerEmail = event.data?.customer?.email;
+  const currency = event.data?.currency;
+
+  if (typeof reference !== "string" || typeof amount !== "number") {
+    return NextResponse.json({ error: "Invalid charge payload" }, { status: 400 });
+  }
+
+  try {
+    await recordVerifiedPaystackVote({
+      reference,
+      amountInKobo: amount,
+      customerEmail,
+      currency,
+    });
+  } catch (error) {
+    if (error instanceof VoteError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+
+    console.error("Paystack webhook processing error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { getContestConfig, stageVoteField } from "@/lib/contest-config"
 import { isAdminSession } from "@/lib/admin-auth";
 import { storeContestantImage } from "@/lib/image-upload";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { Prisma } from "@/src/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server"
 
@@ -53,6 +54,78 @@ function imageUploadErrorResponse(error: unknown) {
       { error: "Image upload failed. Please try again." },
       { status: 502 },
     );
+  }
+
+  return null;
+}
+
+function fieldValue(value: FormDataEntryValue | null) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function isValidName(value: string) {
+  return /^[A-Za-z][A-Za-z\s'-]{0,49}$/.test(value);
+}
+
+function isValidPhone(value: string) {
+  return /^\+?[0-9\s()-]{7,20}$/.test(value);
+}
+
+function isValidVideoUrl(value: string) {
+  if (!value) return true;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
+function validateContestantRegistration({
+  firstName,
+  lastName,
+  gender,
+  age,
+  parent,
+  phone,
+  whatsapp,
+  picture,
+  videoUrl,
+}: {
+  firstName: string;
+  lastName: string;
+  gender: string;
+  age: string;
+  parent: string;
+  phone: string;
+  whatsapp: string;
+  picture: File | null;
+  videoUrl: string;
+}) {
+  if (!firstName || !lastName || !gender || !age || !parent || !phone || !whatsapp || !picture) {
+    return "Missing required fields";
+  }
+
+  if (!isValidName(firstName) || !isValidName(lastName) || !isValidName(parent)) {
+    return "Names may only contain letters, spaces, apostrophes, and hyphens.";
+  }
+
+  if (gender !== "male" && gender !== "female") {
+    return "Select a valid gender.";
+  }
+
+  const ageNumber = Number(age);
+  if (!Number.isSafeInteger(ageNumber) || ageNumber < 0 || ageNumber > 10) {
+    return "Age must be between 0 and 10.";
+  }
+
+  if (!isValidPhone(phone) || !isValidPhone(whatsapp)) {
+    return "Enter a valid phone and WhatsApp number.";
+  }
+
+  if (!isValidVideoUrl(videoUrl)) {
+    return "Video URL must be a valid URL.";
   }
 
   return null;
@@ -120,20 +193,37 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const limited = rateLimit(`contestant-registration:${clientIp(request)}`, {
+      limit: 5,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (limited) return limited;
+
     const formData = await request.formData();
 
-    const firstName = formData.get("firstName");
-    const lastName = formData.get("lastName");
-    const gender = formData.get("gender");
-    const age = formData.get("age");
-    const parent = formData.get("parent");
-    const phone = formData.get("phone");
-    const whatsapp = formData.get("whatsapp");
+    const firstName = fieldValue(formData.get("firstName"));
+    const lastName = fieldValue(formData.get("lastName"));
+    const gender = fieldValue(formData.get("gender")).toLowerCase();
+    const age = fieldValue(formData.get("age"));
+    const parent = fieldValue(formData.get("parent"));
+    const phone = fieldValue(formData.get("phone"));
+    const whatsapp = fieldValue(formData.get("whatsapp"));
     const picture = formData.get("picture") as File | null;
-    const videoUrl = formData.get("videoUrl") as string | null;
+    const videoUrl = fieldValue(formData.get("videoUrl"));
 
-    if (!firstName || !lastName || !gender || !age || !parent || !phone || !whatsapp || !picture) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const validationError = validateContestantRegistration({
+      firstName,
+      lastName,
+      gender,
+      age,
+      parent,
+      phone,
+      whatsapp,
+      picture,
+      videoUrl,
+    });
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     let pictureUrl: string | null = null;
@@ -147,15 +237,15 @@ export async function POST(request: NextRequest) {
     const contestant = await prisma.contestant.create({
       data: {
         contestantId: nextId,
-        firstName: String(firstName),
-        lastName: String(lastName),
-        gender: String(gender),
-        age: String(age),
+        firstName,
+        lastName,
+        gender,
+        age,
         picture: pictureUrl,
         videoUrl: videoUrl || null,
-        parent: String(parent),
-        phone: String(phone),
-        whatsapp: String(whatsapp)
+        parent,
+        phone,
+        whatsapp
       }
     });
 

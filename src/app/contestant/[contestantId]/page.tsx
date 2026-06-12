@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import { capitalize } from "@/utils/capitalize";
 import { contestantImageSrc } from "@/utils/contestant-image";
+import { redactAnonymousVoteLog } from "@/lib/vote-log-privacy";
 import type { Metadata } from "next";
 
 interface ContestantPageParams {
@@ -34,6 +35,15 @@ async function fetchContestant(contestantId: string) {
       voteLogs: {
         orderBy: { createdAt: "desc" },
         take: 10,
+        select: {
+          id: true,
+          voterName: true,
+          amount: true,
+          numberOfVotes: true,
+          voteMethod: true,
+          createdAt: true,
+          keepAnonymous: true,
+        },
       },
     },
   });
@@ -45,8 +55,8 @@ async function fetchContestant(contestantId: string) {
   const contestantCurrentVotes = contestant[field] ?? 0;
 
   const position = await prisma.contestant.count({
-    where: { [field]: { gte: contestantCurrentVotes }, disabled: false },
-  });
+    where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
+  }) + 1;
 
   const preceding = await prisma.contestant.findFirst({
     where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
@@ -126,10 +136,12 @@ export default async function Contestant({ params }: ContestantPageParams) {
     bio: user.bio ?? "",
     picture: user.picture ?? "",
     voteDifference: user.voteDifference ?? 0,
-    voteLogs: user.voteLogs.map((vote) => ({
-      ...vote,
-      createdAt: vote.createdAt.toISOString(),
-    })),
+    voteLogs: user.voteLogs.map((vote) =>
+      redactAnonymousVoteLog({
+        ...vote,
+        createdAt: vote.createdAt.toISOString(),
+      }),
+    ),
     appUrl: APP_URL,
     name: [user.firstName, user.lastName]
       .filter(Boolean)

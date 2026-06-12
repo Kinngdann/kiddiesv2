@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getContestConfig, stageVoteField } from "@/lib/contest-config";
+import { redactAnonymousVoteLog } from "@/lib/vote-log-privacy";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -26,6 +27,15 @@ export async function GET(
         voteLogs: {
           orderBy: { createdAt: "desc" },
           take: 10,
+          select: {
+            id: true,
+            voterName: true,
+            amount: true,
+            numberOfVotes: true,
+            voteMethod: true,
+            createdAt: true,
+            keepAnonymous: true,
+          },
         }
       },
     });
@@ -42,8 +52,8 @@ export async function GET(
     const contestantCurrentVotes = contestant[field] ?? 0;
 
     const position = await prisma.contestant.count({
-      where: { [field]: { gte: contestantCurrentVotes }, disabled: false },
-    });
+      where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
+    }) + 1;
 
     const preceding = await prisma.contestant.findFirst({
       where: { [field]: { gt: contestantCurrentVotes }, disabled: false },
@@ -56,6 +66,7 @@ export async function GET(
 
     return NextResponse.json({
       ...contestant,
+      voteLogs: contestant.voteLogs.map(redactAnonymousVoteLog),
       currentVotes: contestantCurrentVotes,
       currentStage: config.currentStage,
       stageLabel: config.stageLabel,
