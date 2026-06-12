@@ -122,20 +122,17 @@ export default function RegistrationForm() {
           </span>
           <h1 className="font-bold text-white text-[clamp(2rem,4vw,3.5rem)] leading-tight">
             Give Your Child
-            <br />
-            a Chance to{" "}
-            <span className="text-[#FACC14]">Shine!</span>
+            <br />a Chance to <span className="text-[#FACC14]">Shine!</span>
           </h1>
           <p className="text-gray-300 font-semibold leading-relaxed max-w-[40ch] text-sm">
-            Register your child today and join Nigeria&apos;s most exciting kids contest.
-            Campaign, gather votes, and win life-changing prizes!
+            Register your child today and join Nigeria&apos;s most exciting kids
+            contest. Campaign, gather votes, and win life-changing prizes!
           </p>
           <div className="space-y-3 pt-2">
             {perks.map((p) => (
               <div
                 key={p.text}
-                className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3"
-              >
+                className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
                 <span className="text-xl">{p.emoji}</span>
                 <span className="font-bold text-white text-sm">{p.text}</span>
               </div>
@@ -152,7 +149,9 @@ export default function RegistrationForm() {
               </h2>
               <p className="text-gray-500 font-semibold text-sm">
                 Fill out the form to enroll your child into{" "}
-                <span className="text-black font-bold">The Future Star Challenge</span>
+                <span className="text-black font-bold">
+                  The Future Star Challenge
+                </span>
               </p>
             </div>
 
@@ -161,8 +160,7 @@ export default function RegistrationForm() {
                 <Field>
                   <FieldLabel
                     htmlFor="firstName"
-                    className='max-w-fit relative after:absolute after:text-red-500 after:content-["*"] after:-right-2 font-bold text-black'
-                  >
+                    className='max-w-fit relative after:absolute after:text-red-500 after:content-["*"] after:-right-2 font-bold text-black'>
                     First Name
                   </FieldLabel>
                   <Input
@@ -176,7 +174,9 @@ export default function RegistrationForm() {
                   <FieldError>{errors.firstName?.message}</FieldError>
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="lastName" className="font-bold text-black">
+                  <FieldLabel
+                    htmlFor="lastName"
+                    className="font-bold text-black">
                     Last Name
                   </FieldLabel>
                   <Input
@@ -201,7 +201,9 @@ export default function RegistrationForm() {
                     control={control}
                     rules={{ required: "Select a valid gender" }}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}>
                         <SelectTrigger className="border-2 border-black rounded-xl">
                           <SelectValue placeholder="Select Gender" />
                         </SelectTrigger>
@@ -223,7 +225,9 @@ export default function RegistrationForm() {
                     control={control}
                     rules={{ required: "Select a valid age" }}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}>
                         <SelectTrigger className="border-2 border-black rounded-xl">
                           <SelectValue placeholder="Select Age" />
                         </SelectTrigger>
@@ -255,7 +259,9 @@ export default function RegistrationForm() {
                     id="picture"
                     type="file"
                     accept="image/*"
-                    {...register("picture", { required: "Picture is required" })}
+                    {...register("picture", {
+                      required: "Picture is required",
+                    })}
                   />
                   {preview && (
                     <Image
@@ -291,7 +297,9 @@ export default function RegistrationForm() {
               <FieldSeparator className="my-2 border-black/10" />
 
               <Field>
-                <FieldLabel htmlFor="parentName" className="font-bold text-black">
+                <FieldLabel
+                  htmlFor="parentName"
+                  className="font-bold text-black">
                   Parent&apos;s Full Name
                 </FieldLabel>
                 <Input
@@ -324,7 +332,9 @@ export default function RegistrationForm() {
                   <FieldError>{errors.phone?.message}</FieldError>
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="whatsapp" className="font-bold text-black">
+                  <FieldLabel
+                    htmlFor="whatsapp"
+                    className="font-bold text-black">
                     WhatsApp Number
                   </FieldLabel>
                   <Input
@@ -346,16 +356,19 @@ export default function RegistrationForm() {
                 <Button
                   type="submit"
                   className="w-full h-12 font-bold text-black bg-[#FACC14] border-2 border-black rounded-xl shadow-[4px_4px_0px_#111] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition text-sm"
-                  disabled={isSubmitting}
-                >
+                  disabled={isSubmitting}>
                   {isSubmitting && <Spinner />}
-                  {isSubmitting ? "Registering..." : "Register Now 🎉"}
+                  {isSubmitting ? "Registering..." : "Register Now "}
                 </Button>
 
                 {regError && (
-                  <Alert variant="destructive" className="border-2 border-red-500">
+                  <Alert
+                    variant="destructive"
+                    className="border-2 border-red-500">
                     <AlertCircleIcon />
-                    <AlertTitle>Unable to process your registration.</AlertTitle>
+                    <AlertTitle>
+                      Unable to process your registration.
+                    </AlertTitle>
                     <AlertDescription>
                       <ul className="list-inside list-disc text-sm">
                         <li>Check your internet service</li>
@@ -379,8 +392,10 @@ export default function RegistrationForm() {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
               Thank you for enrolling in{" "}
-              <span className="font-bold text-black">The Future Star Challenge</span>. Our
-              team will reach out to you shortly.
+              <span className="font-bold text-black">
+                The Future Star Challenge
+              </span>
+              . Our team will reach out to you shortly.
             </AlertDialogDescription>
             <AlertDialogDescription className="text-center font-bold text-black">
               {contestant.name}&apos;s Contestant ID:{" "}
@@ -393,8 +408,7 @@ export default function RegistrationForm() {
             <AlertDialogAction asChild>
               <Link
                 href="/"
-                className="bg-black text-[#FACC14] font-bold px-6 py-2.5 rounded-xl border-2 border-black hover:bg-gray-900 transition"
-              >
+                className="bg-black text-[#FACC14] font-bold px-6 py-2.5 rounded-xl border-2 border-black hover:bg-gray-900 transition">
                 Back to Home
               </Link>
             </AlertDialogAction>
