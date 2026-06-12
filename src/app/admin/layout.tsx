@@ -25,8 +25,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="min-h-dvh flex flex-col">
-      <header className="border-b px-6 py-3 flex items-center justify-between bg-background">
+    <div className="min-h-dvh flex flex-col pt-16">
+      <header className="sticky top-16 z-40 border-b px-6 py-3 flex items-center justify-between bg-background">
         <nav className="flex gap-4 flex-wrap">
           {navLinks.map((link) => (
             <Link
