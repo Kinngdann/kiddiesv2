@@ -6,7 +6,6 @@ import { ShareLink } from "./components/share";
 import { prisma } from "@/lib/prisma";
 import { getContestConfig, stageVoteField } from "@/lib/contest-config";
 import { capitalize } from "@/utils/capitalize";
-import { contestantImageSrc } from "@/utils/contestant-image";
 import { redactAnonymousVoteLog } from "@/lib/vote-log-privacy";
 import type { Metadata } from "next";
 
@@ -14,7 +13,7 @@ interface ContestantPageParams {
   params: Promise<{ contestantId: string }>;
 }
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://leadritehub.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.leadritehub.com";
 
 async function fetchContestant(contestantId: string) {
   const contestant = await prisma.contestant.findUnique({
@@ -97,22 +96,23 @@ export async function generateMetadata({
     .join(" ");
   const votes = user.currentVotes ?? user.stage2vote ?? 0;
   const pronoun = user.gender === "male" ? "him" : "her";
-  const title = `Vote for ${name} — Contestant #${user.contestantId} | The Future Star Contest`;
-  const description = `${name} has ${votes} votes. Help ${pronoun} reach the top! Vote now for ₦50 per vote.`;
-  const imageUrl = user.picture
-    ? contestantImageSrc(user.picture, user.gender, APP_URL)
-    : `${APP_URL}/logo.svg`;
+  const title = `Help ${name} win The Future Star Contest`;
+  const description = `${name} has ${votes} votes. Help ${pronoun} win by voting today. Every vote counts.`;
   const pageUrl = `${APP_URL}/contestant/${contestantId}`;
+  const imageUrl = `${pageUrl}/opengraph-image`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: pageUrl,
+    },
     openGraph: {
       title,
       description,
       url: pageUrl,
       siteName: "The Future Star Contest",
-      images: [{ url: imageUrl, width: 360, height: 460, alt: name }],
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
       type: "website",
     },
     twitter: {

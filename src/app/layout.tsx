@@ -5,6 +5,9 @@ import { Toaster } from "@ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://www.leadritehub.com",
+  ),
   title: "The Future Star Contest",
   description: "Official website of The Future Star Contest",
 };
