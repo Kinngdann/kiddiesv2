@@ -154,7 +154,6 @@ export default function Profile({ contestant, isVotingOpen }: contestantProps) {
   const srcImage = contestantImageSrc(
     contestant.picture,
     contestant.gender,
-    contestant.appUrl,
   );
   const bio =
     contestant.bio?.trim() || ageSpotlight(contestant.name, contestant.age);

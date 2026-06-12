@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "www.leadritehub.com",
+      },
+      {
+        protocol: "https",
         hostname: "res.cloudinary.com",
       },
     ]
