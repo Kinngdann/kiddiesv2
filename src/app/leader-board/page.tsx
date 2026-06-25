@@ -4,7 +4,7 @@ import { ArrowLeft, Clock3 } from "lucide-react";
 import Link from "next/link";
 import LeaderboardClient, { LeaderboardContestant } from "./leaderboard-client";
 
-const SHOW_COMING_SHORTLY = true;
+const SHOW_COMING_SHORTLY = false;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://kidscrown.net";
 
 export const dynamic = "force-dynamic";
